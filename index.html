@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Family Wrapped 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -17,7 +18,6 @@
             width: 100%; max-width: 500px; height: 100dvh; max-height: 900px;
             position: relative; overflow: hidden; background: #111;
         }
-        /* Desktop View optimization */
         @media (min-width: 768px) {
             #app-viewport { height: 90vh; border-radius: 20px; border: 8px solid #222; margin: auto; }
         }
@@ -26,7 +26,6 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Pop animation logic */
         .slide.active .polaroid-pop { animation: polaroidPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
         @keyframes polaroidPop {
             from { opacity: 0; transform: scale(0.5) translateY(100px) rotate(0deg); }
@@ -35,9 +34,7 @@
 
         .polaroid { background: white; padding: 6px 6px 18px 6px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
         .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
-
         .glass { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; }
-        
         .bar-bg { height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; flex: 1; }
         .bar-fill { height: 100%; background: white; width: 0%; transition: width 0.3s linear; }
         .bar-fill.active { width: 100%; }
@@ -48,7 +45,6 @@
     <div id="app-viewport">
         <div id="progress-nav" class="absolute top-6 left-6 right-6 flex gap-1 z-50"></div>
         <div id="main-container" class="h-full w-full"></div>
-        
         <div class="absolute inset-0 flex z-40">
             <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
             <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
@@ -57,90 +53,17 @@
 
     <script>
         const data = [
-            {
-                type: 'intro',
-                bg: 'linear-gradient(135deg, #1DB954 0%, #138a3e 100%)',
-                heading: "Welcome to 2025 Family Wrapped",
-                desc: "Mom, Dad, Ulap, and Kaio hit play on their year in review. The ultimate family playlist drops now.",
-                media: ['family-intro.jpg']
-            },
-            {
-                type: 'triple-stagger',
-                bg: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)',
-                heading: "Limited Edition Kid Dropped",
-                desc: "A brand-new arrival straight from above. Official drop date: [Insert Date].",
-                media: ['baby1.jpg', 'baby2.jpg', 'baby3.jpg']
-            },
-            {
-                type: 'stats',
-                bg: 'linear-gradient(180deg, #2193b0 0%, #6dd5ed 100%)',
-                heading: "Pelvis Pulled a Moses",
-                desc: "Mom went full biblical for the new arrival. Ultimate respect to the superhero.",
-                stats: [
-                    { label: 'Hospital Visits', val: '20+', icon: '🏥' },
-                    { label: 'Physio Therapies', val: '8', icon: '🧘' },
-                    { label: 'Doctors Consulted', val: '4', icon: '🩺' }
-                ],
-                media: ['mom-hero.jpg']
-            },
-            {
-                type: 'video-bg',
-                bg: '#000',
-                heading: "2025 in Motion",
-                desc: "Playgrounds: ∞ | Beach Days: ∞ | Parental Energy: Critically Low.",
-                media: ['uae-vlog.mp4']
-            },
-            {
-                type: 'standard',
-                bg: 'linear-gradient(135deg, #ff4632 0%, #ff7354 100%)',
-                heading: "Potty Training Complete!",
-                desc: "Ulap retired diapers like a boss 🎓🚽. Freedom for 5 minutes!",
-                media: ['potty-win.jpg']
-            },
-            {
-                type: 'split-cinematic',
-                bg: 'linear-gradient(135deg, #ee9ca7 0%, #ffdde1 100%)',
-                heading: "Double 35th Birthday Drop!",
-                desc: "Mom and Dad leveled up to 35. Still the hottest power-couple collab.",
-                media: ['dad35.jpg', 'mom35.jpg'],
-                textColor: 'text-gray-800'
-            },
-            {
-                type: 'standard',
-                bg: 'linear-gradient(135deg, #fcead3 0%, #f7d0a1 100%)',
-                heading: "Ulap Turned 3",
-                desc: "From wild toddler to confident 3-year-old. Best brother duties (mostly).",
-                media: ['ulap3.jpg'],
-                textColor: 'text-gray-800'
-            },
-            {
-                type: 'video-bg',
-                bg: '#000',
-                heading: "Rising Star 2025",
-                desc: "Mastered rolling, eating, and the dramatic cry reserved for Dad.",
-                media: ['baby-growth.mp4']
-            },
-            {
-                type: 'standard',
-                bg: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-                heading: "Evergreen Hit: 8 Years Married",
-                desc: "Teamwork by day, laughter on repeat. Stolen kisses whenever possible.",
-                media: ['marriage.jpg']
-            },
-            {
-                type: 'floating-grid',
-                bg: 'linear-gradient(135deg, #00b09b 0%, #96c93d 100%)',
-                heading: "The Incredible Village",
-                desc: "Thanks to An-an, the Jumawans, and our spiritual family harmony-makers.",
-                media: ['v1.jpg', 'v2.jpg', 'v3.jpg', 'v4.jpg']
-            },
-            {
-                type: 'outro',
-                bg: 'linear-gradient(180deg, #2c3e50 0%, #000000 100%)',
-                heading: "Produced by the Ultimate Artist",
-                desc: "Written, produced, and timed by God. All glory to Him.",
-                media: ['faith-outro.jpg']
-            }
+            { type: 'intro', bg: '#1DB954', heading: "Welcome to 2025 Family Wrapped", desc: "Mom, Dad, Ulap, and Kaio hit play on their year in review.", media: ['family-intro.jpg'] },
+            { type: 'triple-stagger', bg: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)', heading: "Limited Edition Kid Dropped", desc: "A brand-new arrival straight from above.", media: ['baby1.jpg', 'baby2.jpg', 'baby3.jpg'] },
+            { type: 'stats', bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', heading: "Pelvis Pulled a Moses", desc: "Mom went full biblical for the new arrival. Ultimate respect.", stats: [{label:'Visits', val:'20+', icon:'🏥'},{label:'Physio', val:'8', icon:'🧘'},{label:'Doctors', val:'4', icon:'🩺'}], media: ['mom-hero.jpg'] },
+            { type: 'video-bg', bg: '#000', heading: "2025 in Motion", desc: "Playgrounds: ∞ | Beach Days: ∞", media: ['uae-vlog.mp4'] },
+            { type: 'standard', bg: '#ff4632', heading: "Potty Training Complete!", desc: "Ulap retired diapers like a boss 🎓🚽.", media: ['potty-win.jpg'] },
+            { type: 'split-cinematic', bg: '#ee9ca7', heading: "Double 35th Birthday Drop!", desc: "Mom and Dad leveled up to 35.", media: ['dad35.jpg', 'mom35.jpg'], textColor: 'text-gray-800' },
+            { type: 'standard', bg: '#fcead3', heading: "Ulap Turned 3", desc: "Best brother duties (mostly).", media: ['ulap3.jpg'], textColor: 'text-gray-800' },
+            { type: 'video-bg', bg: '#000', heading: "Rising Star 2025", desc: "Mastered rolling, eating, and dramatic crying.", media: ['baby-growth.mp4'] },
+            { type: 'standard', bg: '#6a11cb', heading: "8 Years Married", desc: "Teamwork by day, laughter on repeat.", media: ['marriage.jpg'] },
+            { type: 'floating-grid', bg: '#00b09b', heading: "The Incredible Village", desc: "Thanks to our spiritual family harmony-makers.", media: ['v1.jpg', 'v2.jpg', 'v3.jpg', 'v4.jpg'] },
+            { type: 'outro', bg: '#000', heading: "Produced by the Ultimate Artist", desc: "Written and timed by God. All glory to Him. Happy 2026!", media: ['faith-outro.jpg'] }
         ];
 
         let current = 0;
@@ -148,63 +71,29 @@
         function render() {
             const container = document.getElementById('main-container');
             const nav = document.getElementById('progress-nav');
-            
             data.forEach((slide, i) => {
                 nav.innerHTML += `<div class="bar-bg"><div id="bar-${i}" class="bar-fill"></div></div>`;
-                
                 let contentHtml = '';
-
                 if (slide.type === 'triple-stagger') {
-                    contentHtml = `
-                        <div class="relative w-full flex-1 flex flex-col justify-end items-center mb-6 min-h-0">
-                            <div class="polaroid polaroid-pop w-[48%] -left-4 top-2 -rotate-12 opacity-90" 
-                                 style="animation-delay: 0.1s; --tw-rotate: -12deg;">
-                                <img src="images/${slide.media[1]}">
-                            </div>
-                            <div class="polaroid polaroid-pop w-[48%] -right-4 -top-1 rotate-12 opacity-90" 
-                                 style="animation-delay: 0.2s; --tw-rotate: 12deg;">
-                                <img src="images/${slide.media[2]}">
-                            </div>
-                            <div class="polaroid polaroid-pop w-[85%] z-20 rotate-1 shadow-2xl relative" 
-                                 style="animation-delay: 0.3s; --tw-rotate: 1deg;">
-                                <img src="images/${slide.media[0]}">
-                            </div>
-                        </div>`;
+                    contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
+                        <div class="polaroid polaroid-pop w-[45%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg;"><img src="images/${slide.media[1]}"></div>
+                        <div class="polaroid polaroid-pop w-[45%] -right-2 top-8 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg;"><img src="images/${slide.media[2]}"></div>
+                        <div class="polaroid polaroid-pop w-[85%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg;"><img src="images/${slide.media[0]}"></div>
+                    </div>`;
                 } else if (slide.type === 'stats') {
-                    contentHtml = `
-                        <div class="relative w-full aspect-[4/5] max-h-[50vh] rounded-[20px] overflow-hidden shadow-2xl polaroid-pop mb-6" style="--tw-rotate: 0deg;">
-                            <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
-                            <div class="absolute inset-x-2 bottom-2 grid grid-cols-3 gap-1.5">
-                                ${slide.stats.map(s => `
-                                    <div class="glass p-2 flex flex-col items-center justify-center text-center text-white min-h-[85px]">
-                                        <span class="text-xl mb-1">${s.icon}</span>
-                                        <span class="block text-lg font-bold">${s.val}</span>
-                                        <span class="text-[7px] leading-tight uppercase font-bold opacity-70 tracking-tighter">${s.label}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>`;
+                    contentHtml = `<div class="relative w-full aspect-[4/5] max-h-[50vh] rounded-[20px] overflow-hidden shadow-2xl mb-4"><img src="images/${slide.media[0]}" class="w-full h-full object-cover">
+                        <div class="absolute inset-x-2 bottom-2 grid grid-cols-3 gap-1.5">${slide.stats.map(s => `<div class="glass p-2 flex flex-col items-center justify-center text-center text-white"><span class="text-xl">${s.icon}</span><span class="block text-lg font-bold">${s.val}</span><span class="text-[8px] uppercase font-bold opacity-70">${s.label}</span></div>`).join('')}</div></div>`;
                 } else if (slide.type === 'video-bg') {
                     contentHtml = `<video src="images/${slide.media[0]}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"></video>`;
+                } else if (slide.type === 'split-cinematic') {
+                    contentHtml = `<div class="flex flex-col gap-2 flex-1 mb-4"><img src="images/${slide.media[0]}" class="h-1/2 object-cover rounded-t-2xl"><img src="images/${slide.media[1]}" class="h-1/2 object-cover rounded-b-2xl"></div>`;
+                } else if (slide.type === 'floating-grid') {
+                    contentHtml = `<div class="grid grid-cols-2 gap-2 flex-1 mb-4">${slide.media.map(m => `<img src="images/${m}" class="w-full h-full object-cover rounded-xl shadow-md">`).join('')}</div>`;
                 } else {
-                    const imgCount = slide.media.length;
-                    contentHtml = `<div class="w-full flex-1 flex items-center justify-center mb-6 min-h-0">
-                        <img src="images/${slide.media[0]}" class="max-w-full max-h-full object-contain rounded-[20px] shadow-2xl">
-                    </div>`;
+                    contentHtml = `<div class="w-full flex-1 flex items-center justify-center mb-6 min-h-0"><img src="images/${slide.media[0]}" class="max-w-full max-h-full object-contain rounded-[20px] shadow-2xl"></div>`;
                 }
 
-                container.innerHTML += `
-                    <div id="slide-${i}" class="slide ${slide.textColor || 'text-white'}" style="background: ${slide.bg}">
-                        ${slide.type === 'video-bg' ? contentHtml : ''}
-                        <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
-                            ${slide.type !== 'video-bg' ? contentHtml : '<div class="flex-1"></div>'}
-                            <div class="${slide.type === 'video-bg' ? 'glass p-6 mx-2' : 'px-2'} shrink-0">
-                                <h1 class="text-2xl md:text-3xl mb-2 font-bold leading-tight">${slide.heading}</h1>
-                                <p class="text-sm md:text-base font-normal opacity-90 leading-snug">${slide.desc}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                container.innerHTML += `<div id="slide-${i}" class="slide ${slide.textColor || 'text-white'}" style="background: ${slide.bg}">${slide.type === 'video-bg' ? contentHtml : ''}<div class="relative z-10 flex flex-col h-full pt-14 pb-8">${slide.type !== 'video-bg' ? contentHtml : '<div class="flex-1"></div>'}<div class="${slide.type === 'video-bg' ? 'glass p-6 mx-2' : 'px-2'} shrink-0"><h1 class="text-2xl font-bold mb-2">${slide.heading}</h1><p class="text-sm opacity-90">${slide.desc}</p></div></div></div>`;
             });
             update();
         }
@@ -215,6 +104,7 @@
                 if (i === current) {
                     s.style.display = 'flex';
                     s.classList.add('active');
+                    if (i === data.length - 1) triggerConfetti();
                 } else {
                     s.style.display = 'none';
                     s.classList.remove('active');
@@ -223,12 +113,21 @@
             });
         }
 
+        function triggerConfetti() {
+            const count = 200, defaults = { origin: { y: 0.7 }, zIndex: 1000 };
+            function fire(particleRatio, opts) { confetti(Object.assign({}, defaults, opts, { particleCount: Math.floor(count * particleRatio) })); }
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
         function changeSlide(dir) {
             if (dir === 1 && current < data.length - 1) current++;
             else if (dir === -1 && current > 0) current--;
             update();
         }
-
         render();
     </script>
 </body>
