@@ -26,7 +26,7 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop, .slide.active .frame-pop, .slide.active .video-scrap-pop { 
+        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop, .slide.active .frame-pop, .slide.active .video-scrap-pop, .slide.active .outro-pop { 
             animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; 
         }
         @keyframes popIn {
@@ -126,8 +126,8 @@
             { 
                 type: 'triple-stagger-top', 
                 bg: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)', 
-                heading: "Hospital Hours Logged: Just Enough", // UPDATED
-                desc: "Viral invaders and middle-of-the-night emergencies meant a few ER waiting-room marathons. Brave faces all around and thankfully swift recoveries made it all manageable.", // UPDATED
+                heading: "Hospital Hours Logged: Just Enough", 
+                desc: "Viral invaders and middle-of-the-night emergencies meant a few ER waiting-room marathons. Brave faces all around and thankfully swift recoveries made it all manageable.", 
                 media: ['checkup1.jpg', 'checkup2.jpg', 'checkup3.jpg'] 
             },
             { 
@@ -170,10 +170,10 @@
                 media: ['v1.jpg', 'v2.jpg', 'v3.jpg', 'v4.jpg'] 
             },
             { 
-                type: 'outro', 
+                type: 'outro-impact', // NEW IMPACT LAYOUT
                 bg: '#000', 
-                heading: "Produced by the Ultimate Artist", 
-                desc: "Every milestone, every laugh, every late-night survival, and every new life in 2025 was written, produced, and perfectly timed by God. All glory, honor, and thanks belong to Him – the One who turned ordinary days into an extraordinary soundtrack.", 
+                heading: "That’s a Wrap on 2025", 
+                desc: "Every laugh, growth spurt, and new life in 2025 was gifted by God’s flawless timing.", 
                 media: ['faith-outro.jpg'] 
             }
         ];
@@ -190,12 +190,13 @@
                 // --- SLIDE CONTENT GENERATION ---
 
                 if (slide.type === 'spotify-intro') {
+                     // UPDATED: Polaroid is larger (max-w-600px, w-90%)
                      contentHtml = `
                          <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
                              <h1 class="text-5xl md:text-[7rem] font-[900] uppercase leading-[0.85] tracking-tighter text-center title-pop">
                                 ${slide.heading.replace(/\n/g, '<br>')}
                              </h1>
-                             <div class="polaroid polaroid-pop rotate-3 w-[70%] md:w-[50%] max-w-[300px] shadow-2xl" style="position: relative; animation-delay: 0.3s;">
+                             <div class="polaroid polaroid-pop rotate-3 w-[90%] md:w-[70%] max-w-[600px] shadow-2xl" style="position: relative; animation-delay: 0.3s;">
                                 <img src="images/${slide.media[0]}">
                              </div>
                          </div>`;
@@ -310,11 +311,27 @@
                     contentHtml = `<div class="flex flex-col gap-2 flex-1 mb-4"><img src="images/${slide.media[0]}" class="h-1/2 object-cover rounded-t-2xl"><img src="images/${slide.media[1]}" class="h-1/2 object-cover rounded-b-2xl"></div>`;
                 } else if (slide.type === 'floating-grid') {
                     contentHtml = `<div class="grid grid-cols-2 gap-2 flex-1 mb-4">${slide.media.map(m => `<img src="images/${m}" class="w-full h-full object-cover rounded-xl shadow-md">`).join('')}</div>`;
-                } else if (slide.type === 'outro') {
+                } else if (slide.type === 'outro-impact') {
+                    // NEW IMPACTFUL OUTRO LAYOUT
                     contentHtml = `
-                        <div class="w-full flex-1 flex flex-col items-center justify-center mb-6 min-h-0">
-                            <img src="images/${slide.media[0]}" class="max-w-[80%] max-h-[60%] object-contain rounded-[20px] shadow-2xl mb-8">
-                            <button onclick="current=0; update(); event.stopPropagation();" class="relative z-50 bg-white text-black font-bold py-3 px-8 rounded-full shadow-lg">Play Again</button>
+                        <div class="absolute inset-0 z-0">
+                            <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+                        </div>
+                        
+                        <div class="relative z-10 w-full h-full flex flex-col items-center justify-center p-6 text-center">
+                            <h1 class="text-4xl md:text-6xl font-[900] uppercase leading-none mb-6 outro-pop text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
+                                ${slide.heading}
+                            </h1>
+                            <div class="max-w-[90%] mb-12 outro-pop" style="animation-delay: 0.2s">
+                                <p class="text-lg md:text-xl font-medium leading-relaxed text-gray-100">${slide.desc}</p>
+                            </div>
+                            
+                            <button onclick="current=0; update(); event.stopPropagation();" 
+                                class="outro-pop relative z-50 bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer"
+                                style="animation-delay: 0.4s">
+                                Play Again
+                            </button>
                         </div>`;
                 } else {
                     contentHtml = `<div class="w-full flex-1 flex items-center justify-center mb-6 min-h-0"><img src="images/${slide.media[0]}" class="max-w-full max-h-full object-contain rounded-[20px] shadow-2xl"></div>`;
@@ -324,9 +341,9 @@
                 let slideInner = '';
                 
                 // 1. Background Only / Full Screen Types
-                if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro') {
+                if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro' || slide.type === 'outro-impact') {
                     slideInner = contentHtml;
-                    if (slide.type !== 'spotify-intro') {
+                    if (slide.type !== 'spotify-intro' && slide.type !== 'outro-impact') {
                          slideInner += `
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                                 ${(slide.type !== 'video-bg' && slide.type !== 'featured-hero') ? contentHtml : '<div class="flex-1"></div>'}
