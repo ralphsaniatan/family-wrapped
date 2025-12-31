@@ -7,22 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --spotify-green: #1DB954; }
         body { font-family: 'Inter', sans-serif; background: #000; color: white; margin: 0; overflow: hidden; }
         h1 { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; letter-spacing: -2px; line-height: 0.9; }
         
         .slide { display: none; height: 100dvh; width: 100%; position: relative; padding: 24px; transition: opacity 0.5s ease; }
         .slide.active { display: flex; flex-direction: column; justify-content: center; }
         
-        /* Rounded aesthetic */
-        .rounded-card { border-radius: 32px; overflow: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .rounded-card { border-radius: 40px; overflow: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); }
         
-        /* Animation */
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .animate-content { animation: slideUp 0.6s ease-out forwards; }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-content { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
         
-        /* Progress bars */
         .bar-bg { height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; flex: 1; }
         .bar-fill { height: 100%; background: white; width: 0%; transition: width 0.3s ease; }
         .bar-fill.active { width: 100%; }
@@ -30,13 +26,13 @@
 </head>
 <body>
 
-    <div id="progress-nav" class="fixed top-6 left-6 right-6 flex gap-2 z-50"></div>
+    <div id="progress-nav" class="fixed top-8 left-6 right-6 flex gap-2 z-50"></div>
 
     <div id="main-container"></div>
 
     <div class="fixed inset-0 flex z-40">
-        <div class="w-1/3 h-full" onclick="changeSlide(-1)"></div>
-        <div class="w-2/3 h-full" onclick="changeSlide(1)"></div>
+        <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
+        <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
     </div>
 
     <script>
@@ -52,71 +48,72 @@
                 type: 'dual',
                 bg: '#7D4B94',
                 heading: "Limited Edition Kid Dropped",
-                desc: "Welcomed our second tiny human! Official drop date: [Insert Date].",
-                media: ['baby-a.jpg', 'baby-b.jpg']
+                desc: "The family welcomed their second tiny human – a limited-edition arrival. Official drop date: [Insert Date].",
+                media: ['baby-1.jpg', 'baby-2.jpg']
             },
             {
-                type: 'standard',
+                type: 'stats',
                 bg: '#FF4632',
                 heading: "Pelvis Pulled a Moses",
-                desc: "Recovery stats: [X] visits, [X] sessions. Respect to the superhero.",
+                desc: "Mom’s body went full biblical for the new arrival. Ultimate respect to the superhero who made it happen.",
+                stats: { hospital: 'X', physio: 'X', doctors: 'X' },
                 media: ['mom-hero.jpg']
             },
             {
                 type: 'video-bg',
                 bg: '#000',
                 heading: "2025 in Motion",
-                desc: "Playgrounds: ∞ | Beach Days: ∞ | Parental Energy: Critically Low.",
+                desc: "Playgrounds: ∞ | Beach Days: ∞ | Parental Energy: Critically Low. Sponsored by two tiny chaos engines.",
                 media: ['uae-vlog.mp4']
             },
             {
                 type: 'standard',
                 bg: '#509BF5',
                 heading: "Potty Training Complete!",
-                desc: "Ulap retired diapers like a boss 🎓. Freedom lasted 5 minutes...",
+                desc: "Ulap officially retired diapers like a boss 🎓🚽. Freedom lasted 5 minutes before the Baby #2 renewal.",
                 media: ['potty-win.jpg']
             },
             {
                 type: 'dual',
                 bg: '#FFC864',
                 heading: "Double 35th Birthday Drop!",
-                desc: "Leveled up to 35. Still the hottest power-couple collab of the decade.",
+                desc: "Mom and Dad leveled up to 35. Still the hottest power-couple collab of the decade.",
                 media: ['dad35.jpg', 'mom35.jpg']
             },
             {
                 type: 'video-bg',
                 bg: '#2D46B9',
                 heading: "Ulap Turned 3",
-                desc: "From wild toddler to confident 3-year-old. Best brother duties (mostly).",
+                desc: "Mastered sharing (sometimes), full-story conversations, and big-brother duties (mostly).",
                 media: ['ulap-bday.mp4']
             },
             {
-                type: 'standard',
+                type: 'video-bg',
                 bg: '#1DB954',
                 heading: "Rising Star: The Newest Member",
-                desc: "Mastered rolling, eating, and crying for Dad. Growth report: Stronger & happier.",
-                media: ['baby-stars.jpg']
+                desc: "Mastered rolling, eating, and the cry reserved for Dad. Patiently grinding for that comeback feature.",
+                media: ['baby-growth.mp4']
             },
             {
                 type: 'standard',
                 bg: '#E91E63',
                 heading: "Evergreen Hit: 8 Years Married",
-                desc: "Teamwork by day, laughter on repeat. A timeless duet.",
+                desc: "Teamwork by day, laughter on repeat. Stolen kisses whenever possible. A timeless duet.",
                 media: ['marriage.jpg']
             },
             {
                 type: 'grid',
                 bg: '#4B917D',
                 heading: "The Incredible Village",
-                desc: "Heartfelt thanks to An-an, the Jumawans, and our spiritual family.",
-                media: ['v1.jpg', 'v2.jpg', 'v3.jpg', 'v4.jpg']
+                desc: "Heartfelt thanks to An-an, the Jumawans, and our spiritual family harmony-makers.",
+                media: ['village1.jpg', 'village2.jpg', 'village3.jpg', 'village4.jpg']
             },
             {
                 type: 'outro',
                 bg: '#000',
                 heading: "Produced by the Ultimate Artist",
-                desc: "Written, produced, and timed by God. All glory to Him.",
-                media: ['faith.jpg']
+                desc: "Written, produced, and perfectly timed by God. All glory, honor, and thanks belong to Him.",
+                media: ['faith-outro.jpg']
             }
         ];
 
@@ -131,14 +128,25 @@
                 
                 let mediaHtml = '';
                 if(slide.type === 'dual') {
-                    mediaHtml = `<div class="grid grid-cols-2 gap-2 h-full">
+                    mediaHtml = `<div class="grid grid-cols-2 gap-3 h-full">
                         <img src="images/${slide.media[0]}" class="h-full object-cover rounded-card">
                         <img src="images/${slide.media[1]}" class="h-full object-cover rounded-card">
                     </div>`;
+                } else if (slide.type === 'stats') {
+                    mediaHtml = `
+                        <div class="relative w-full h-full rounded-card overflow-hidden">
+                            <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-2 text-white">
+                                <div class="glass p-3 rounded-3xl text-center"><span class="block text-xl font-black">🏥 ${slide.stats.hospital}</span><span class="text-[9px] uppercase font-bold opacity-70 tracking-widest">Hospital</span></div>
+                                <div class="glass p-3 rounded-3xl text-center border-t-2 border-white/40"><span class="block text-xl font-black">🧘 ${slide.stats.physio}</span><span class="text-[9px] uppercase font-bold opacity-70 tracking-widest">Physio</span></div>
+                                <div class="glass p-3 rounded-3xl text-center"><span class="block text-xl font-black">🩺 ${slide.stats.doctors}</span><span class="text-[9px] uppercase font-bold opacity-70 tracking-widest">Doctors</span></div>
+                            </div>
+                        </div>`;
                 } else if (slide.type === 'video-bg') {
-                    mediaHtml = `<video src="images/${slide.media[0]}" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-60"></video>`;
+                    mediaHtml = `<video src="images/${slide.media[0]}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"></video>`;
                 } else if (slide.type === 'grid') {
-                    mediaHtml = `<div class="grid grid-cols-2 grid-rows-2 gap-2 h-full">
+                    mediaHtml = `<div class="grid grid-cols-2 grid-rows-2 gap-3 h-full">
                         ${slide.media.map(m => `<img src="images/${m}" class="w-full h-full object-cover rounded-card">`).join('')}
                     </div>`;
                 } else {
@@ -150,9 +158,9 @@
                         ${slide.type === 'video-bg' ? mediaHtml : ''}
                         <div class="relative z-10 animate-content flex flex-col items-center">
                             ${slide.type !== 'video-bg' ? `<div class="w-full aspect-[4/5] mb-8">${mediaHtml}</div>` : ''}
-                            <div class="${slide.type === 'video-bg' ? 'mt-64 bg-black/40 p-6 rounded-3xl backdrop-blur-md' : ''}">
-                                <h1 class="text-4xl mb-4 text-center">${slide.heading}</h1>
-                                <p class="text-lg font-bold opacity-90 text-center leading-tight">${slide.desc}</p>
+                            <div class="${slide.type === 'video-bg' ? 'mt-72 glass p-8 rounded-[40px] mx-2' : 'w-full px-2'}">
+                                <h1 class="text-4xl mb-4 ${slide.type === 'video-bg' ? 'text-center' : 'text-left'}">${slide.heading}</h1>
+                                <p class="text-lg font-bold opacity-90 leading-tight ${slide.type === 'video-bg' ? 'text-center' : 'text-left'}">${slide.desc}</p>
                             </div>
                         </div>
                     </div>
@@ -163,13 +171,16 @@
 
         function update() {
             data.forEach((_, i) => {
-                document.getElementById(`slide-${i}`).classList.toggle('active', i === current);
-                document.getElementById(`bar-${i}`).classList.toggle('active', i <= current);
+                const s = document.getElementById(`slide-${i}`);
+                s.classList.toggle('active', i === current);
+                const bar = document.getElementById(`bar-${i}`);
+                bar.classList.toggle('active', i <= current);
             });
         }
 
         function changeSlide(dir) {
-            current = Math.max(0, Math.min(data.length - 1, current + dir));
+            if (dir === 1 && current < data.length - 1) current++;
+            if (dir === -1 && current > 0) current--;
             update();
         }
 
