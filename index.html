@@ -26,11 +26,24 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Pop animation */
         .slide.active .polaroid-pop { animation: polaroidPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
         @keyframes polaroidPop {
             from { opacity: 0; transform: scale(0.5) translateY(100px) rotate(0deg); }
             to { opacity: 1; transform: scale(1) translateY(0) var(--tw-rotate); }
         }
+
+        /* Vinyl Record Animation */
+        .vinyl-record { 
+            width: 280px; height: 280px; border-radius: 50%; 
+            background: #111; border: 10px solid #222; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 80px rgba(255,255,255,0.05);
+            position: relative; display: flex; align-items: center; justify-content: center;
+            animation: slowSpin 10s linear infinite;
+        }
+        @keyframes slowSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .vinyl-cover { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; }
 
         .polaroid { background: white; padding: 6px 6px 18px 6px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
         .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
@@ -104,8 +117,8 @@
                 textColor: 'text-gray-800' 
             },
             { 
-                type: 'standard', 
-                bg: '#fcead3', 
+                type: 'vinyl', 
+                bg: '#f7d08a', 
                 heading: "Ulap Turned 3 – And Owned the Entire Year", 
                 desc: "The family’s original tiny human went from wild toddler to confident 3-year-old: mastered sharing (sometimes), full-story conversations, outrunning his parents, and big-brother duties (mostly). Proud doesn’t even cover it. Best birthday yet.", 
                 media: ['ulap3.jpg'], 
@@ -166,6 +179,15 @@
                         <div class="polaroid polaroid-pop w-[48%] -right-2 -top-2 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg;"><img src="images/${slide.media[2]}"></div>
                         <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg;"><img src="images/${slide.media[0]}"></div>
                     </div>`;
+                } else if (slide.type === 'vinyl') {
+                    contentHtml = `
+                        <div class="flex-1 flex items-center justify-center mb-6 min-h-0">
+                            <div class="vinyl-record">
+                                <img src="images/${slide.media[0]}" class="vinyl-cover">
+                                <div class="absolute inset-0 border-[40px] border-black/20 rounded-full"></div>
+                                <div class="absolute w-4 h-4 bg-white rounded-full z-10"></div>
+                            </div>
+                        </div>`;
                 } else if (slide.type === 'stats') {
                     contentHtml = `<div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-[20px] overflow-hidden shadow-2xl mb-4"><img src="images/${slide.media[0]}" class="w-full h-full object-cover">
                         <div class="absolute inset-x-2 bottom-2 grid grid-cols-3 gap-1.5">${slide.stats.map(s => `<div class="glass p-2 flex flex-col items-center justify-center text-center text-white"><span class="text-xl">${s.icon}</span><span class="block text-lg font-bold">${s.val}</span><span class="text-[8px] uppercase font-bold opacity-70">${s.label}</span></div>`).join('')}</div></div>`;
@@ -175,13 +197,22 @@
                     contentHtml = `<div class="flex flex-col gap-2 flex-1 mb-4"><img src="images/${slide.media[0]}" class="h-1/2 object-cover rounded-t-2xl"><img src="images/${slide.media[1]}" class="h-1/2 object-cover rounded-b-2xl"></div>`;
                 } else if (slide.type === 'floating-grid') {
                     contentHtml = `<div class="grid grid-cols-2 gap-2 flex-1 mb-4">${slide.media.map(m => `<img src="images/${m}" class="w-full h-full object-cover rounded-xl shadow-md">`).join('')}</div>`;
+                } else if (slide.type === 'outro') {
+                    contentHtml = `
+                        <div class="w-full flex-1 flex flex-col items-center justify-center mb-6 min-h-0">
+                            <img src="images/${slide.media[0]}" class="max-w-[80%] max-h-[60%] object-contain rounded-[20px] shadow-2xl mb-8">
+                            <button onclick="current=0; update(); event.stopPropagation();" 
+                                    class="relative z-50 bg-white text-black font-bold py-3 px-8 rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg">
+                                Play Again
+                            </button>
+                        </div>`;
                 } else {
                     contentHtml = `<div class="w-full flex-1 flex items-center justify-center mb-6 min-h-0"><img src="images/${slide.media[0]}" class="max-w-full max-h-full object-contain rounded-[20px] shadow-2xl"></div>`;
                 }
 
                 container.innerHTML += `
                     <div id="slide-${i}" class="slide ${slide.textColor || 'text-white'}" style="background: ${slide.bg}">
-                        ${slide.type === 'intro-hero' || slide.type === 'video-bg' ? contentHtml : ''}
+                        ${(slide.type === 'intro-hero' || slide.type === 'video-bg') ? contentHtml : ''}
                         ${slide.type !== 'intro-hero' ? `
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                                 ${slide.type !== 'video-bg' ? contentHtml : '<div class="flex-1"></div>'}
