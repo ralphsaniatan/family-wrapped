@@ -116,12 +116,19 @@
                 media: ['potty-win.jpg'] 
             },
             { 
-                type: 'double-video-scrapbook', // NEW TYPE
+                type: 'double-video-scrapbook', 
                 bg: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)', 
                 heading: "Double 35th Birthday Drop!", 
                 desc: "Mom and Dad both leveled up to 35 this year, celebrating with double the cake, double the love, and double the toddler + baby interruptions. Still the hottest power-couple collab of the decade.", 
                 media: ['dad35.mp4', 'mom35.mp4'], 
                 textColor: 'text-gray-800' 
+            },
+            { 
+                type: 'triple-stagger-top', // NEW SLIDE TYPE
+                bg: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)', // Teal-Indigo Gradient
+                heading: "Hospital Visits: Few but Necessary", 
+                desc: "Between viral bugs and routine checks, we logged a few hours in the waiting room. Brave faces, lollipop bribes, and clean bills of health made it all manageable.", 
+                media: ['checkup1.jpg', 'checkup2.jpg', 'checkup3.jpg'] 
             },
             { 
                 type: 'featured-hero', 
@@ -206,7 +213,6 @@
                             </div>
                         </div>`;
                 } else if (slide.type === 'double-video-scrapbook') {
-                    // NEW: STAGGERED 9:16 VIDEOS
                     contentHtml = `
                         <div class="flex-1 min-h-0 w-full relative">
                              <div class="absolute top-0 left-2 w-[48%] aspect-[9/16] bg-white p-1.5 shadow-xl rotate-[-3deg] z-10 video-scrap-pop" style="animation-delay: 0.1s">
@@ -251,7 +257,8 @@
                                 <img src="images/${slide.media[0]}" class="w-full h-full object-cover border border-gray-100">
                             </div>
                         </div>`;
-                } else if (slide.type === 'triple-stagger') {
+                } else if (slide.type === 'triple-stagger' || slide.type === 'triple-stagger-top') {
+                    // Logic allows reusing this HTML for both slide types
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
                         <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg; animation-delay: 0.1s;"><img src="images/${slide.media[1]}"></div>
                         <div class="polaroid polaroid-pop w-[48%] -right-2 -top-2 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg; animation-delay: 0.2s;"><img src="images/${slide.media[2]}"></div>
@@ -322,7 +329,7 @@
                     }
                 }
                 // 2. Custom Top Layouts (Text is on TOP)
-                else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook') {
+                else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                             <div class="px-2 mb-4 shrink-0 ${slide.type === 'sticker-bomb' ? 'text-left' : 'text-center'}">
