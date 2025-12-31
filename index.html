@@ -76,12 +76,11 @@
     <script>
         const data = [
             { 
-                type: 'spotify-intro', // NEW TYPE
-                // Vibrant, high-energy gradient background
+                type: 'spotify-intro',
                 bg: 'linear-gradient(135deg, #FF0080 0%, #FF8C00 50%, #40E0D0 100%)', 
-                // Using newlines (\n) to stack the huge text
                 heading: "FAMILY\nWRAPPED\n2025", 
-                desc: "" // No description
+                desc: "",
+                media: ['family-intro.jpg'] // Using this image now
             },
             { 
                 type: 'triple-stagger', 
@@ -180,12 +179,15 @@
                 // --- SLIDE CONTENT GENERATION ---
 
                 if (slide.type === 'spotify-intro') {
-                     // NEW Massive Centered Typography Layout
+                     // UPDATED LAYOUT: Heading stack with Polaroid below it
                      contentHtml = `
-                         <div class="flex-1 w-full flex items-center justify-center p-4 z-20">
-                             <h1 class="text-6xl md:text-[7rem] font-[900] uppercase leading-[0.85] tracking-tighter text-center title-pop">
+                         <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
+                             <h1 class="text-5xl md:text-[7rem] font-[900] uppercase leading-[0.85] tracking-tighter text-center title-pop">
                                 ${slide.heading.replace(/\n/g, '<br>')}
                              </h1>
+                             <div class="polaroid polaroid-pop rotate-3 w-[70%] md:w-[50%] max-w-[300px] shadow-2xl" style="position: relative; animation-delay: 0.3s;">
+                                <img src="images/${slide.media[0]}">
+                             </div>
                          </div>`;
                 } else if (slide.type === 'featured-hero') {
                     contentHtml = `
