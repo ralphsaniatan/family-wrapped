@@ -104,7 +104,6 @@
             { 
                 type: 'video-bg', 
                 bg: '#000', 
-                // UPDATED HEADING
                 heading: "Playgrounds ∞ | Beaches ∞ | Energy: 0%", 
                 desc: "Countless sunrise swings and sunset sand digs across the UAE. Outdoor hours: excessive. Proudly powered by two relentless tiny chaos engines.", 
                 media: ['uae-vlog.mp4'] 
@@ -140,12 +139,14 @@
             },
             {
                 type: 'sticker-bomb', 
-                bg: '#2c3e50', 
+                // UPDATED: Brighter Gradient
+                bg: 'linear-gradient(135deg, #FF5F6D 0%, #FFC371 50%, #6A82FB 100%)', 
                 heading: "2025 Word Playlist",
                 desc: "Ulap & Kaio’s Greatest Hits",
                 lists: [
-                    { title: "Ulap’s Heavy Rotation", items: ["No", "Garbage", "Carwash", "Tomato", "Satoli"], color: "text-[#1DB954]" },
-                    { title: "Kaio’s Breakout Hits", items: ["Papa", "Papa", "Papa", "Papa", "Papa"], color: "text-[#38bdf8]" }
+                    // UPDATED Colors to pop against new gradient
+                    { title: "Ulap’s Heavy Rotation", items: ["No", "Garbage", "Carwash", "Tomato", "Satoli"], color: "text-[#00FFFF]" }, // Cyan
+                    { title: "Kaio’s Breakout Hits", items: ["Papa", "Papa", "Papa", "Papa", "Papa"], color: "text-[#FF00FF]" } // Magenta
                 ],
                 stickers: ['sticker1.png', 'sticker2.png'] 
             },
@@ -222,7 +223,7 @@
                              <div class="sticker-photo w-24 h-24 top-4 right-4 z-0 rotate-12 sticker-pop" style="animation-delay: 0.8s;">
                                 <img src="images/${slide.stickers[0]}" class="w-full h-full object-contain">
                              </div>
-                             <div class="sticker-photo w-24 h-24 bottom-20 right-4 z-0 -rotate-6 sticker-pop" style="animation-delay: 0.9s;">
+                             <div class="sticker-photo w-24 h-24 bottom-4 right-4 z-0 -rotate-6 sticker-pop" style="animation-delay: 0.9s;">
                                 <img src="images/${slide.stickers[1]}" class="w-full h-full object-contain">
                              </div>
                              <div class="relative z-10 flex flex-col gap-6 h-full justify-center">
@@ -238,7 +239,7 @@
                                     <h3 class="text-xs font-bold uppercase tracking-widest mb-2 opacity-70 ml-2">${slide.lists[1].title}</h3>
                                     <div class="flex flex-wrap gap-2">
                                         ${slide.lists[1].items.map((item, idx) => `
-                                            <div class="sticker-word sticker-pop !bg-blue-100" style="transform: rotate(${Math.random() * 6 - 3}deg); animation-delay: ${0.4 + (idx * 0.1)}s">${item}</div>
+                                            <div class="sticker-word sticker-pop !bg-pink-100" style="transform: rotate(${Math.random() * 6 - 3}deg); animation-delay: ${0.4 + (idx * 0.1)}s">${item}</div>
                                         `).join('')}
                                     </div>
                                 </div>
