@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Family Wrapped 2025</title>
+    <title>Saniatan Family Wrapped 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;700;900&display=swap" rel="stylesheet">
@@ -102,8 +102,8 @@
                 type: 'stats', 
                 bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', 
                 heading: "Pelvis Pulled a Moses – Parted the Seas for the New Arrival", 
-                desc: "Mom’s body went full biblical to bring the little one earthside, complete with pubic symphysis diastasis. Recovery stats: Ultimate respect to the superhero who made it happen.", 
-                // Updated with new stat
+                // UPDATED: Mom -> Mama
+                desc: "Mama’s body went full biblical to bring the little one earthside, complete with pubic symphysis diastasis. Recovery stats: Ultimate respect to the superhero who made it happen.", 
                 stats: [
                     {label:'Hospital Visits', val:'20+', icon:'🏥'},
                     {label:'Physio Sessions', val:'8', icon:'🧘'},
@@ -130,7 +130,8 @@
                 type: 'double-video-scrapbook', 
                 bg: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)', 
                 heading: "Double 35th Birthday Drop!", 
-                desc: "Mom and Dad both leveled up to 35 this year, celebrating with double the cake, double the love, and double the toddler + baby interruptions. Still the hottest power-couple collab of the decade.", 
+                // UPDATED: Mom -> Mama, Dad -> Papa
+                desc: "Mama and Papa both leveled up to 35 this year, celebrating with double the cake, double the love, and double the toddler + baby interruptions. Still the hottest power-couple collab of the decade.", 
                 media: ['dad35.mp4', 'mom35.mp4'], 
                 textColor: 'text-gray-800' 
             },
@@ -152,7 +153,8 @@
                 type: 'top-feature-video', 
                 bg: 'linear-gradient(180deg, #000000 0%, #1a1a1a 100%)', 
                 heading: "Rising Star 2025: The Second Tiny Human", 
-                desc: "The family’s newest member mastered rolling, eating, laughing, and the dramatic cry reserved exclusively for when Dad tries to hold him. 2025 growth report: bigger, stronger, happier, and fiercely loyal to Mom & An-an. Dad’s patiently grinding for that comeback feature.", 
+                // UPDATED: Mom -> Mama, Dad -> Papa
+                desc: "The family’s newest member mastered rolling, eating, laughing, and the dramatic cry reserved exclusively for when Papa tries to hold him. 2025 growth report: bigger, stronger, happier, and fiercely loyal to Mama & An-an. Papa’s patiently grinding for that comeback feature.", 
                 media: ['baby-growth.mp4'] 
             },
             {
@@ -170,7 +172,8 @@
                 type: 'framed-photo', 
                 bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
                 heading: "8 Years Married", 
-                desc: "Mom and Dad marked eight years of marriage in 2025, continuing to nail the ultimate collab: teamwork by day, laughter on repeat, late-night kid tag-teams, and stolen kisses whenever possible. Life’s soundtrack wouldn’t be the same without this timeless duet.", 
+                // UPDATED: Mom -> Mama, Dad -> Papa
+                desc: "Mama and Papa marked eight years of marriage in 2025, continuing to nail the ultimate collab: teamwork by day, laughter on repeat, late-night kid tag-teams, and stolen kisses whenever possible. Life’s soundtrack wouldn’t be the same without this timeless duet.", 
                 media: ['marriage.jpg'] 
             },
             { 
@@ -302,7 +305,6 @@
                         </div>
                     </div>`;
                 } else if (slide.type === 'stats') {
-                    // UPDATED: Added "Fine Print" below grid
                     contentHtml = `
                         <div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-[20px] overflow-hidden shadow-2xl mb-2">
                             <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
@@ -337,7 +339,7 @@
                                 <p class="text-lg md:text-xl font-medium leading-relaxed text-gray-100">${slide.desc}</p>
                             </div>
                             <button onclick="current=0; update(); event.stopPropagation();" 
-                                class="outro-pop pointer-events-auto relative z-50 bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer"
+                                class="outro-pop pointer-events-auto relative z-[2000] bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer"
                                 style="animation-delay: 0.4s">
                                 Play Again
                             </button>
@@ -347,7 +349,6 @@
                 }
 
                 // --- CONTAINER CONSTRUCTION ---
-                // ADDED: pointer-events-auto to specific interactable elements
                 let slideInner = '';
                 
                 // 1. Background Only / Full Screen Types
@@ -366,7 +367,7 @@
                             </div>`;
                     }
                 }
-                // 2. Custom Top Layouts
+                // 2. Custom Top Layouts (Text is on TOP)
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -379,7 +380,7 @@
                             ${contentHtml}
                         </div>`;
                 }
-                // 3. Standard Layouts
+                // 3. Standard Layouts (Text is on BOTTOM)
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
