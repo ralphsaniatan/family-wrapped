@@ -25,7 +25,7 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Polaroid Animation */
+        /* Spring Pop Animation for Photos */
         .slide.active .polaroid-pop { animation: polaroidPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
         @keyframes polaroidPop {
             from { opacity: 0; transform: scale(0.5) translateY(100px) rotate(0deg); }
@@ -155,18 +155,27 @@
 
                 if (slide.type === 'triple-stagger') {
                     contentHtml = `
-                        <div class="relative w-full h-[480px] -translate-y-12">
-                            <div class="polaroid polaroid-pop w-44 -left-8 top-4 -rotate-12 opacity-90" style="animation-delay: 0.1s; --tw-rotate: -12deg;"><img src="images/${slide.media[1]}"></div>
-                            <div class="polaroid polaroid-pop w-48 -right-8 top-12 rotate-12 opacity-90" style="animation-delay: 0.2s; --tw-rotate: 12deg;"><img src="images/${slide.media[2]}"></div>
-                            <div class="polaroid polaroid-pop w-64 left-1/2 -translate-x-1/2 top-16 z-20 rotate-2 shadow-2xl" style="animation-delay: 0.3s; --tw-rotate: 2deg;"><img src="images/${slide.media[0]}"></div>
+                        <div class="relative w-full h-[58vh] flex items-center justify-center -translate-y-4">
+                            <div class="polaroid polaroid-pop w-[55%] -left-8 top-4 -rotate-12 opacity-90 shadow-xl" 
+                                 style="animation-delay: 0.1s; --tw-rotate: -12deg;">
+                                <img src="images/${slide.media[1]}">
+                            </div>
+                            <div class="polaroid polaroid-pop w-[58%] -right-8 top-16 rotate-12 opacity-90 shadow-xl" 
+                                 style="animation-delay: 0.2s; --tw-rotate: 12deg;">
+                                <img src="images/${slide.media[2]}">
+                            </div>
+                            <div class="polaroid polaroid-pop w-[75%] left-1/2 -translate-x-1/2 top-24 z-20 rotate-3 shadow-2xl" 
+                                 style="animation-delay: 0.3s; --tw-rotate: 3deg;">
+                                <img src="images/${slide.media[0]}">
+                            </div>
                         </div>`;
                 } else if (slide.type === 'stats') {
                     contentHtml = `
-                        <div class="relative w-full aspect-[4/5] rounded-[20px] overflow-hidden shadow-2xl">
+                        <div class="relative w-full aspect-[4/5] rounded-[20px] overflow-hidden shadow-2xl polaroid-pop" style="--tw-rotate: 0deg;">
                             <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
                             <div class="absolute inset-x-3 bottom-3 grid grid-cols-3 gap-2">
                                 ${slide.stats.map(s => `
-                                    <div class="glass p-3 flex flex-col items-center justify-center text-center text-white min-h-[100px]">
+                                    <div class="glass p-3 flex flex-col items-center justify-center text-center text-white min-h-[95px]">
                                         <span class="text-2xl mb-1">${s.icon}</span>
                                         <span class="block text-xl font-bold">${s.val}</span>
                                         <span class="text-[8px] leading-tight uppercase font-bold opacity-70 tracking-wider">${s.label}</span>
@@ -176,13 +185,13 @@
                         </div>`;
                 } else if (slide.type === 'split-cinematic') {
                     contentHtml = `
-                        <div class="flex flex-col gap-2 h-[450px] w-full">
+                        <div class="flex flex-col gap-2 h-[480px] w-full">
                             <img src="images/${slide.media[0]}" class="h-1/2 w-full object-cover rounded-t-[20px]">
                             <img src="images/${slide.media[1]}" class="h-1/2 w-full object-cover rounded-b-[20px]">
                         </div>`;
                 } else if (slide.type === 'floating-grid') {
                     contentHtml = `
-                        <div class="grid grid-cols-2 gap-3 h-[450px] w-full transform -rotate-2">
+                        <div class="grid grid-cols-2 gap-3 h-[480px] w-full transform -rotate-2">
                             ${slide.media.map(m => `<img src="images/${m}" class="w-full h-full object-cover rounded-[20px] shadow-lg border-2 border-white/10">`).join('')}
                         </div>`;
                 } else if (slide.type === 'video-bg') {
