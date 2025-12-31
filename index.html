@@ -60,6 +60,11 @@
             transform: rotate(-5deg);
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
+
+        /* THIS FIXES THE CLICK ISSUE */
+        canvas {
+            pointer-events: none !important;
+        }
     </style>
 </head>
 <body>
@@ -98,7 +103,6 @@
                 bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', 
                 heading: "Pelvis Pulled a Moses – Parted the Seas for the New Arrival", 
                 desc: "Mom’s body went full biblical to bring the little one earthside, complete with pubic symphysis diastasis. Recovery stats: Ultimate respect to the superhero who made it happen.", 
-                // UPDATED: Added 4th stat
                 stats: [
                     {label:'Hospital Visits', val:'20+', icon:'🏥'},
                     {label:'Physio Sessions', val:'8', icon:'🧘'},
@@ -297,7 +301,6 @@
                         </div>
                     </div>`;
                 } else if (slide.type === 'stats') {
-                    // UPDATED: Now supports 4 columns for the new stat
                     contentHtml = `
                         <div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-[20px] overflow-hidden shadow-2xl mb-4">
                             <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
