@@ -49,19 +49,15 @@
 
         .bg-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 5%, rgba(0,0,0,0.2) 60%); z-index: 5; }
 
-        /* Sticker Styles */
         .sticker-word {
             display: inline-block; padding: 8px 16px; margin: 4px;
             background: white; color: black; font-weight: 800; font-size: 1.1rem;
             border-radius: 4px; box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
             border: 2px solid white;
         }
-        /* UPDATED for transparent PNGs */
         .sticker-photo {
             position: absolute; 
-            /* Removed background: white and box-shadow */
             transform: rotate(-5deg);
-            /* Added drop-shadow filter for transparent images */
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
     </style>
@@ -78,6 +74,11 @@
     </div>
 
     <script>
+        // --- CONFIGURATION ---
+        // Consistent Text Classes
+        const HEADING_CLASS = "text-2xl md:text-3xl font-bold mb-2 leading-tight";
+        const DESC_CLASS = "text-sm md:text-base opacity-90 leading-relaxed";
+
         const data = [
             { 
                 type: 'spotify-intro',
@@ -146,7 +147,6 @@
                     { title: "Ulap’s Heavy Rotation", items: ["No", "Garbage", "Carwash", "Tomato", "Satoli"], color: "text-[#1DB954]" },
                     { title: "Kaio’s Breakout Hits", items: ["Papa", "Papa", "Papa", "Papa", "Papa"], color: "text-[#38bdf8]" }
                 ],
-                // UPDATED: Please provide these transparent PNGs
                 stickers: ['sticker1.png', 'sticker2.png'] 
             },
             { 
@@ -281,22 +281,22 @@
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                                 ${(slide.type !== 'video-bg' && slide.type !== 'featured-hero') ? contentHtml : '<div class="flex-1"></div>'}
                                 <div class="${(slide.type === 'video-bg' || slide.type === 'featured-hero') ? 'glass p-5 mx-2' : 'px-2'} shrink-0">
-                                    <h1 class="text-xl md:text-2xl font-bold mb-2 leading-tight">${slide.heading}</h1>
+                                    <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
                                     <div class="text-container">
-                                        <p class="text-sm md:text-base opacity-90 leading-snug">${slide.desc}</p>
+                                        <p class="${DESC_CLASS}">${slide.desc}</p>
                                     </div>
                                 </div>
                             </div>`;
                     }
                 }
-                // 2. Custom Top Layouts (UPDATED: text-left for sticker bomb)
+                // 2. Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                             <div class="px-2 mb-4 shrink-0 ${slide.type === 'sticker-bomb' ? 'text-left' : 'text-center'}">
-                                <h1 class="text-2xl md:text-3xl font-bold mb-2 leading-tight">${slide.heading}</h1>
+                                <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
                                 <div class="text-container">
-                                    <p class="text-sm md:text-base opacity-90 leading-snug">${slide.desc}</p>
+                                    <p class="${DESC_CLASS}">${slide.desc}</p>
                                 </div>
                             </div>
                             ${contentHtml}
@@ -308,9 +308,9 @@
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                             ${contentHtml}
                             <div class="px-2 shrink-0">
-                                <h1 class="text-xl md:text-2xl font-bold mb-2 leading-tight">${slide.heading}</h1>
+                                <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
                                 <div class="text-container">
-                                    <p class="text-sm md:text-base opacity-90 leading-snug">${slide.desc}</p>
+                                    <p class="${DESC_CLASS}">${slide.desc}</p>
                                 </div>
                             </div>
                         </div>`;
