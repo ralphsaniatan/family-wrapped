@@ -124,8 +124,8 @@
                 textColor: 'text-gray-800' 
             },
             { 
-                type: 'triple-stagger-top', // NEW SLIDE TYPE
-                bg: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)', // Teal-Indigo Gradient
+                type: 'triple-stagger-top', 
+                bg: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)', 
                 heading: "Hospital Visits: Few but Necessary", 
                 desc: "Between viral bugs and routine checks, we logged a few hours in the waiting room. Brave faces, lollipop bribes, and clean bills of health made it all manageable.", 
                 media: ['checkup1.jpg', 'checkup2.jpg', 'checkup3.jpg'] 
@@ -258,11 +258,17 @@
                             </div>
                         </div>`;
                 } else if (slide.type === 'triple-stagger' || slide.type === 'triple-stagger-top') {
-                    // Logic allows reusing this HTML for both slide types
-                    contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
-                        <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg; animation-delay: 0.1s;"><img src="images/${slide.media[1]}"></div>
-                        <div class="polaroid polaroid-pop w-[48%] -right-2 -top-2 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg; animation-delay: 0.2s;"><img src="images/${slide.media[2]}"></div>
-                        <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg; animation-delay: 0.3s;"><img src="images/${slide.media[0]}"></div>
+                    // UPDATED LAYOUT: Better spacing and sizing for overlap
+                    contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-8 min-h-0">
+                        <div class="polaroid polaroid-pop w-[40%] left-6 bottom-20 -rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.1s;">
+                            <img src="images/${slide.media[1]}">
+                        </div>
+                        <div class="polaroid polaroid-pop w-[40%] right-6 bottom-24 rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.2s;">
+                            <img src="images/${slide.media[2]}">
+                        </div>
+                        <div class="polaroid polaroid-pop w-[55%] z-30 rotate-2 shadow-2xl relative top-4" style="animation-delay: 0.3s;">
+                            <img src="images/${slide.media[0]}">
+                        </div>
                     </div>`;
                 } else if (slide.type === 'scrapbook-collage') {
                     contentHtml = `<div class="relative w-full flex-1 mb-4 p-4">
