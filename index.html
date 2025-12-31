@@ -6,7 +6,7 @@
     <title>Family Wrapped 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body { 
             font-family: 'Product Sans', 'Inter', sans-serif; 
@@ -26,7 +26,7 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop { 
+        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop { 
             animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; 
         }
         @keyframes popIn {
@@ -76,11 +76,12 @@
     <script>
         const data = [
             { 
-                type: 'intro-hero', 
-                bg: '#1DB954', 
-                heading: "Welcome to the 2025 Family Wrapped", 
-                desc: "Mom, Dad, Ulap, and Kaio hit play on their year in review – new arrivals, wild adventures, big wins, and endless grace. The ultimate family playlist drops now.", 
-                media: ['family-intro.jpg'] 
+                type: 'spotify-intro', // NEW TYPE
+                // Vibrant, high-energy gradient background
+                bg: 'linear-gradient(135deg, #FF0080 0%, #FF8C00 50%, #40E0D0 100%)', 
+                // Using newlines (\n) to stack the huge text
+                heading: "FAMILY\nWRAPPED\n2025", 
+                desc: "" // No description
             },
             { 
                 type: 'triple-stagger', 
@@ -142,7 +143,6 @@
                     { title: "Ulap’s Heavy Rotation", items: ["No", "Garbage", "Carwash", "Tomato", "Satoli"], color: "text-[#1DB954]" },
                     { title: "Kaio’s Breakout Hits", items: ["Papa", "Papa", "Papa", "Papa", "Papa"], color: "text-[#38bdf8]" }
                 ],
-                // Using existing images as "Photo Stickers"
                 stickers: ['baby2.jpg', 'ulap3.jpg'] 
             },
             { 
@@ -179,16 +179,14 @@
                 
                 // --- SLIDE CONTENT GENERATION ---
 
-                if (slide.type === 'intro-hero') {
-                    contentHtml = `
-                        <img src="images/${slide.media[0]}" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="bg-overlay"></div>
-                        <div class="relative z-10 flex flex-col h-full justify-center px-6 items-center text-center">
-                            <h1 class="text-3xl md:text-4xl font-bold mb-6 leading-tight">${slide.heading}</h1>
-                            <div class="text-container">
-                                <p class="text-lg opacity-90 leading-relaxed">${slide.desc}</p>
-                            </div>
-                        </div>`;
+                if (slide.type === 'spotify-intro') {
+                     // NEW Massive Centered Typography Layout
+                     contentHtml = `
+                         <div class="flex-1 w-full flex items-center justify-center p-4 z-20">
+                             <h1 class="text-6xl md:text-[7rem] font-[900] uppercase leading-[0.85] tracking-tighter text-center title-pop">
+                                ${slide.heading.replace(/\n/g, '<br>')}
+                             </h1>
+                         </div>`;
                 } else if (slide.type === 'featured-hero') {
                     contentHtml = `
                         <div class="absolute inset-0 w-full h-full">
@@ -211,15 +209,12 @@
                              <div class="sticker-photo w-20 h-20 bottom-10 left-0 z-0 -rotate-6 sticker-pop" style="animation-delay: 0.9s;">
                                 <img src="images/${slide.stickers[1]}" class="w-full h-full object-cover">
                              </div>
-
                              <div class="relative z-10 flex flex-col gap-6 h-full justify-center">
                                 <div>
                                     <h3 class="text-xs font-bold uppercase tracking-widest mb-2 opacity-70 ml-2">${slide.lists[0].title}</h3>
                                     <div class="flex flex-wrap gap-2">
                                         ${slide.lists[0].items.map((item, idx) => `
-                                            <div class="sticker-word sticker-pop" style="transform: rotate(${Math.random() * 6 - 3}deg); animation-delay: ${idx * 0.1}s">
-                                                ${item}
-                                            </div>
+                                            <div class="sticker-word sticker-pop" style="transform: rotate(${Math.random() * 6 - 3}deg); animation-delay: ${idx * 0.1}s">${item}</div>
                                         `).join('')}
                                     </div>
                                 </div>
@@ -227,9 +222,7 @@
                                     <h3 class="text-xs font-bold uppercase tracking-widest mb-2 opacity-70 ml-2">${slide.lists[1].title}</h3>
                                     <div class="flex flex-wrap gap-2">
                                         ${slide.lists[1].items.map((item, idx) => `
-                                            <div class="sticker-word sticker-pop !bg-blue-100" style="transform: rotate(${Math.random() * 6 - 3}deg); animation-delay: ${0.4 + (idx * 0.1)}s">
-                                                ${item}
-                                            </div>
+                                            <div class="sticker-word sticker-pop !bg-blue-100" style="transform: rotate(${Math.random() * 6 - 3}deg); animation-delay: ${0.4 + (idx * 0.1)}s">${item}</div>
                                         `).join('')}
                                     </div>
                                 </div>
@@ -275,9 +268,10 @@
                 let slideInner = '';
                 
                 // 1. Background Only / Full Screen Types
-                if (slide.type === 'intro-hero' || slide.type === 'featured-hero' || slide.type === 'video-bg') {
+                if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro') {
                     slideInner = contentHtml;
-                    if (slide.type !== 'intro-hero') {
+                    // Add text block ONLY if it's NOT the spotify-intro
+                    if (slide.type !== 'spotify-intro') {
                          slideInner += `
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                                 ${(slide.type !== 'video-bg' && slide.type !== 'featured-hero') ? contentHtml : '<div class="flex-1"></div>'}
