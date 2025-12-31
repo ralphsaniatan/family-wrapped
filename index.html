@@ -25,6 +25,13 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Polaroid Animation */
+        .slide.active .polaroid-pop { animation: polaroidPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        @keyframes polaroidPop {
+            from { opacity: 0; transform: scale(0.5) translateY(100px) rotate(0deg); }
+            to { opacity: 1; transform: scale(1) translateY(0) var(--tw-rotate); }
+        }
+
         .polaroid { background: white; padding: 10px 10px 30px 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
         .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
 
@@ -33,9 +40,6 @@
         .bar-bg { height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; flex: 1; }
         .bar-fill { height: 100%; background: white; width: 0%; transition: width 0.3s linear; }
         .bar-fill.active { width: 100%; }
-
-        .stat-v-bar { width: 4px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; overflow: hidden; margin: 0 auto 8px; }
-        .stat-v-fill { position: absolute; bottom: 0; left: 0; width: 100%; background: #fff; transition: height 1s ease-out; }
     </style>
 </head>
 <body>
@@ -72,9 +76,9 @@
                 heading: "Pelvis Pulled a Moses",
                 desc: "Mom went full biblical for the new arrival. Ultimate respect to the superhero.",
                 stats: [
-                    { label: 'Hospital', val: 12, max: 20, icon: '🏥' },
-                    { label: 'Physio', val: 25, max: 30, icon: '🧘' },
-                    { label: 'Doctors', val: 8, max: 15, icon: '🩺' }
+                    { label: 'Hospital Visits', val: 12, icon: '🏥' },
+                    { label: 'Physio Therapies', val: 25, icon: '🧘' },
+                    { label: 'Doctors Consulted', val: 8, icon: '🩺' }
                 ],
                 media: ['mom-hero.jpg']
             },
@@ -151,12 +155,10 @@
 
                 if (slide.type === 'triple-stagger') {
                     contentHtml = `
-                        <div class="relative w-full h-[480px] -translate-y-8">
-                            <div class="polaroid w-44 -left-8 top-4 -rotate-12 opacity-90"><img src="images/${slide.media[1]}"></div>
-                            <div class="polaroid w-48 -right-8 top-12 rotate-12 opacity-90"><img src="images/${slide.media[2]}"></div>
-                            <div class="polaroid w-64 left-1/2 -translate-x-1/2 top-16 z-20 rotate-2 shadow-2xl">
-                                <img src="images/${slide.media[0]}">
-                            </div>
+                        <div class="relative w-full h-[480px] -translate-y-12">
+                            <div class="polaroid polaroid-pop w-44 -left-8 top-4 -rotate-12 opacity-90" style="animation-delay: 0.1s; --tw-rotate: -12deg;"><img src="images/${slide.media[1]}"></div>
+                            <div class="polaroid polaroid-pop w-48 -right-8 top-12 rotate-12 opacity-90" style="animation-delay: 0.2s; --tw-rotate: 12deg;"><img src="images/${slide.media[2]}"></div>
+                            <div class="polaroid polaroid-pop w-64 left-1/2 -translate-x-1/2 top-16 z-20 rotate-2 shadow-2xl" style="animation-delay: 0.3s; --tw-rotate: 2deg;"><img src="images/${slide.media[0]}"></div>
                         </div>`;
                 } else if (slide.type === 'stats') {
                     contentHtml = `
@@ -164,12 +166,10 @@
                             <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
                             <div class="absolute inset-x-3 bottom-3 grid grid-cols-3 gap-2">
                                 ${slide.stats.map(s => `
-                                    <div class="glass p-3 text-center text-white">
-                                        <div class="stat-v-bar">
-                                            <div class="stat-v-fill" style="height: ${(s.val / s.max) * 100}%"></div>
-                                        </div>
-                                        <span class="block text-xl font-bold">${s.icon} ${s.val}</span>
-                                        <span class="text-[9px] uppercase font-bold opacity-60 tracking-wider">${s.label}</span>
+                                    <div class="glass p-3 flex flex-col items-center justify-center text-center text-white min-h-[100px]">
+                                        <span class="text-2xl mb-1">${s.icon}</span>
+                                        <span class="block text-xl font-bold">${s.val}</span>
+                                        <span class="text-[8px] leading-tight uppercase font-bold opacity-70 tracking-wider">${s.label}</span>
                                     </div>
                                 `).join('')}
                             </div>
