@@ -26,7 +26,7 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop, .slide.active .frame-pop, .slide.active .video-scrap-pop, .slide.active .outro-pop { 
+        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop, .slide.active .frame-pop, .slide.active .video-scrap-pop { 
             animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; 
         }
         @keyframes popIn {
@@ -170,7 +170,7 @@
                 media: ['v1.jpg', 'v2.jpg', 'v3.jpg', 'v4.jpg'] 
             },
             { 
-                type: 'outro-impact', // NEW IMPACT LAYOUT
+                type: 'outro-impact', 
                 bg: '#000', 
                 heading: "That’s a Wrap on 2025", 
                 desc: "Every laugh, growth spurt, and new life in 2025 was gifted by God’s flawless timing.", 
@@ -190,7 +190,6 @@
                 // --- SLIDE CONTENT GENERATION ---
 
                 if (slide.type === 'spotify-intro') {
-                     // UPDATED: Polaroid is larger (max-w-600px, w-90%)
                      contentHtml = `
                          <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
                              <h1 class="text-5xl md:text-[7rem] font-[900] uppercase leading-[0.85] tracking-tighter text-center title-pop">
@@ -312,13 +311,11 @@
                 } else if (slide.type === 'floating-grid') {
                     contentHtml = `<div class="grid grid-cols-2 gap-2 flex-1 mb-4">${slide.media.map(m => `<img src="images/${m}" class="w-full h-full object-cover rounded-xl shadow-md">`).join('')}</div>`;
                 } else if (slide.type === 'outro-impact') {
-                    // NEW IMPACTFUL OUTRO LAYOUT
                     contentHtml = `
                         <div class="absolute inset-0 z-0">
                             <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
                         </div>
-                        
                         <div class="relative z-10 w-full h-full flex flex-col items-center justify-center p-6 text-center">
                             <h1 class="text-4xl md:text-6xl font-[900] uppercase leading-none mb-6 outro-pop text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
                                 ${slide.heading}
@@ -326,9 +323,8 @@
                             <div class="max-w-[90%] mb-12 outro-pop" style="animation-delay: 0.2s">
                                 <p class="text-lg md:text-xl font-medium leading-relaxed text-gray-100">${slide.desc}</p>
                             </div>
-                            
                             <button onclick="current=0; update(); event.stopPropagation();" 
-                                class="outro-pop relative z-50 bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer"
+                                class="outro-pop relative z-[2000] bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer"
                                 style="animation-delay: 0.4s">
                                 Play Again
                             </button>
