@@ -1,0 +1,20 @@
+FAMILY WRAPPED 2025 - MEDIA ASSETS REQUIRED
+Folder: /images/
+
+[SLIDE 01] family-intro.jpg   (Main family group photo)
+[SLIDE 02] baby1.jpg          (New baby - Main Center)
+[SLIDE 02] baby2.jpg          (New baby - Back Left)
+[SLIDE 02] baby3.jpg          (New baby - Back Right)
+[SLIDE 03] mom-hero.jpg       (Photo of Mom for stats page)
+[SLIDE 04] uae-vlog.mp4       (Video: 2025 family highlights)
+[SLIDE 05] potty-win.jpg      (Ulap potty training photo)
+[SLIDE 06] dad35.jpg          (Dad's 35th birthday photo)
+[SLIDE 06] mom35.jpg          (Mom's 35th birthday photo)
+[SLIDE 07] ulap3.jpg          (Ulap's 3rd birthday photo)
+[SLIDE 08] baby-growth.mp4    (Video: Baby milestones/growth)
+[SLIDE 09] marriage.jpg       (8th Anniversary photo)
+[SLIDE 10] v1.jpg             (Village photo 1)
+[SLIDE 10] v2.jpg             (Village photo 2)
+[SLIDE 10] v3.jpg             (Village photo 3)
+[SLIDE 10] v4.jpg             (Village photo 4)
+[SLIDE 11] faith-outro.jpg    (Final closing/faith photo)
