@@ -265,15 +265,15 @@
                         <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg; animation-delay: 0.3s;"><img src="images/${slide.media[0]}"></div>
                     </div>`;
                 } else if (slide.type === 'triple-stagger-top') {
-                    // NEW SMALLER LAYOUT FOR SLIDE 6 (Avoids overlapping)
+                    // NEW SMALLER LAYOUT FOR SLIDE 6 (Higher up, barely overlapping)
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-8 min-h-0">
-                        <div class="polaroid polaroid-pop w-[40%] left-6 bottom-20 -rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.1s;">
+                        <div class="polaroid polaroid-pop w-[40%] left-6 bottom-36 -rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.1s;">
                             <img src="images/${slide.media[1]}">
                         </div>
-                        <div class="polaroid polaroid-pop w-[40%] right-6 bottom-24 rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.2s;">
+                        <div class="polaroid polaroid-pop w-[40%] right-6 bottom-40 rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.2s;">
                             <img src="images/${slide.media[2]}">
                         </div>
-                        <div class="polaroid polaroid-pop w-[55%] z-30 rotate-2 shadow-2xl relative top-4" style="animation-delay: 0.3s;">
+                        <div class="polaroid polaroid-pop w-[55%] z-30 rotate-2 shadow-2xl relative top-12" style="animation-delay: 0.3s;">
                             <img src="images/${slide.media[0]}">
                         </div>
                     </div>`;
