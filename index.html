@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Wrapped 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #000; color: white; overflow: hidden; }
+        .slide { display: none; height: 100dvh; width: 100%; padding: 20px; transition: all 0.5s ease; }
+        .slide.active { display: flex; flex-direction: column; animation: zoomIn 0.4s ease-out; }
+        .media-container { border-radius: 40px; overflow: hidden; border: 4px solid rgba(255,255,255,0.1); }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .progress-bar { height: 3px; background: rgba(255,255,255,0.3); border-radius: 10px; flex: 1; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; width: 0%; transition: width 0.1s linear; }
+        .progress-fill.filled { width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div id="progress-container" class="absolute top-8 left-4 right-4 flex gap-2 z-50"></div>
+
+    <div id="slides-container">
+        </div>
+
+    <div class="fixed inset-0 flex z-40">
+        <div class="w-1/3 h-full" onclick="prevSlide()"></div>
+        <div class="w-2/3 h-full" onclick="nextSlide()"></div>
+    </div>
+
+    <script>
+        const familyData = [
+            { title: "Welcome to the 2025 Family Wrapped", desc: "Mom, Dad, Ulap, and Kaio hit play on their year in review. The ultimate family playlist drops now.", color: "#1DB954", media: "family.jpg", type: "intro" },
+            { title: "Limited Edition Kid Dropped", desc: "The family welcomed their second tiny human in 2025. Official drop date: [Date].", color: "#BD93F9", media: "baby.jpg", type: "photo" },
+            { title: "Pelvis Pulled a Moses", desc: "Mom went full biblical to bring the little one earthside. Recovery: [X] physio sessions. Total respect.", color: "#FF5555", media: "mom.jpg", type: "photo" },
+            { title: "2025 in Motion", desc: "Playgrounds: ∞ | Beach Days: ∞ | Parental Energy: Critically Low.", color: "#FFB86C", media: "uae.mp4", type: "video" },
+            { title: "Potty Training Complete!", desc: "Ulap officially retired diapers! Parents tasted freedom for 5 minutes... then baby #2 arrived.", color: "#8BE9FD", media: "ulap.jpg", type: "photo" },
+            { title: "Double 35th Birthday Drop!", desc: "Mom and Dad leveled up to 35. Still the hottest power-couple collab of the decade.", color: "#F1FA8C", media: "bday.jpg", type: "photo" },
+            { title: "Ulap Turned 3", desc: "Mastered sharing (sometimes) and big-brother duties (mostly). Best birthday yet.", color: "#50FA7B", media: "ulap3.mp4", type: "video" },
+            { title: "Rising Star: The Second Human", desc: "Mastered rolling and the 'Dad-exclusive' dramatic cry. Fiercely loyal to Mom.", color: "#FF79C6", media: "baby2.mp4", type: "video" },
+            { title: "Evergreen Hit: 8 Years Married", desc: "Teamwork by day, laughter on repeat. Life’s soundtrack is better together.", color: "#6272A4", media: "anniversary.jpg", type: "photo" },
+            { title: "The Incredible Village", desc: "Thanks to An-an, the Jumawans, and our spiritual family for the harmony.", color: "#44475A", media: "village.jpg", type: "photo" },
+            { title: "Produced by the Ultimate Artist", desc: "Every laugh and milestone was perfectly timed by God. All glory to Him.", color: "#000000", media: "cross.jpg", type: "photo" }
+        ];
+
+        let current = 0;
+
+        function init() {
+            const container = document.getElementById('slides-container');
+            const progress = document.getElementById('progress-container');
+            
+            familyData.forEach((slide, i) => {
+                // Create Progress Bar
+                progress.innerHTML += `<div class="progress-bar"><div id="fill-${i}" class="progress-fill"></div></div>`;
+                
+                // Create Slide
+                const slideDiv = document.createElement('div');
+                slideDiv.className = `slide ${i === 0 ? 'active' : ''}`;
+                slideDiv.style.backgroundColor = slide.color;
+                slideDiv.innerHTML = `
+                    <div class="mt-12 media-container w-full aspect-[4/5] bg-black/20 flex items-center justify-center">
+                        ${slide.type === 'video' 
+                            ? `<video src="images/${slide.media}" autoplay muted loop class="w-full h-full object-cover"></video>` 
+                            : `<img src="images/${slide.media}" class="w-full h-full object-cover">`}
+                    </div>
+                    <div class="mt-8">
+                        <h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none mb-4">${slide.title}</h1>
+                        <p class="text-lg font-bold opacity-90 leading-tight">${slide.desc}</p>
+                    </div>
+                `;
+                container.appendChild(slideDiv);
+            });
+        }
+
+        function nextSlide() {
+            if (current < familyData.length - 1) {
+                document.querySelectorAll('.slide')[current].classList.remove('active');
+                document.getElementById(`fill-${current}`).classList.add('filled');
+                current++;
+                document.querySelectorAll('.slide')[current].classList.add('active');
+            }
+        }
+
+        function prevSlide() {
+            if (current > 0) {
+                document.querySelectorAll('.slide')[current].classList.remove('active');
+                document.getElementById(`fill-${current-1}`).classList.remove('filled');
+                current--;
+                document.querySelectorAll('.slide')[current].classList.add('active');
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
