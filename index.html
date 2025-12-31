@@ -26,7 +26,7 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop { 
+        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop, .slide.active .player-pop { 
             animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; 
         }
         @keyframes popIn {
@@ -143,15 +143,14 @@
                 heading: "2025 Word Playlist",
                 desc: "Ulap & Kaio’s Greatest Hits",
                 lists: [
-                    // UPDATED: "No" changed to "Train"
                     { title: "Ulap’s Heavy Rotation", items: ["Train", "Garbage", "Carwash", "Tomato", "Satoli"], color: "text-[#00FFFF]" },
                     { title: "Kaio’s Breakout Hits", items: ["Papa", "Papa", "Papa", "Papa", "Papa"], color: "text-[#FF00FF]" } 
                 ],
                 stickers: ['sticker1.png', 'sticker2.png'] 
             },
             { 
-                type: 'standard', 
-                bg: 'linear-gradient(to right, #6a11cb, #2575fc)', 
+                type: 'music-player', // NEW SLIDE TYPE
+                bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
                 heading: "Evergreen Hit: 8 Years Married", 
                 desc: "Mom and Dad marked eight years of marriage in 2025, continuing to nail the ultimate collab: teamwork by day, laughter on repeat, late-night kid tag-teams, and stolen kisses whenever possible. Life’s soundtrack wouldn’t be the same without this timeless duet.", 
                 media: ['marriage.jpg'] 
@@ -244,6 +243,36 @@
                                 </div>
                              </div>
                         </div>`;
+                } else if (slide.type === 'music-player') {
+                    // NEW MUSIC PLAYER LAYOUT
+                    contentHtml = `
+                        <div class="w-full flex-1 flex flex-col justify-center items-center px-4 mb-4">
+                            <div class="w-full aspect-square max-w-[320px] bg-white p-2 rounded-xl shadow-2xl mb-6 player-pop">
+                                <img src="images/${slide.media[0]}" class="w-full h-full object-cover rounded-lg">
+                            </div>
+                            
+                            <div class="w-full max-w-[320px] player-pop" style="animation-delay: 0.2s">
+                                <div class="w-full bg-white/30 h-1.5 rounded-full mb-2">
+                                    <div class="bg-white h-full rounded-full w-[75%]"></div>
+                                </div>
+                                <div class="flex justify-between text-xs opacity-80 mb-4">
+                                    <span>0:08</span>
+                                    <span>∞</span>
+                                </div>
+                                
+                                <div class="flex justify-between items-center px-2">
+                                    <svg class="w-6 h-6 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                    <div class="flex gap-6 items-center">
+                                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M11 17l-5-5 5-5v10zm7 0l-5-5 5-5v10z"></path></svg>
+                                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-black">
+                                            <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                                        </div>
+                                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M13 17l5-5-5-5v10zm-7 0l5-5-5-5v10z"></path></svg>
+                                    </div>
+                                    <svg class="w-6 h-6 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                        </div>`;
                 } else if (slide.type === 'triple-stagger') {
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
                         <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg; animation-delay: 0.1s;"><img src="images/${slide.media[1]}"></div>
@@ -312,7 +341,20 @@
                             ${contentHtml}
                         </div>`;
                 }
-                // 3. Standard Layouts (Text is on BOTTOM)
+                // 3. Music Player Layout (Image Top, Text Middle, Controls Bottom)
+                else if (slide.type === 'music-player') {
+                    slideInner = `
+                        <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
+                            ${contentHtml}
+                            <div class="px-4 shrink-0">
+                                <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
+                                <div class="text-container">
+                                    <p class="${DESC_CLASS}">${slide.desc}</p>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+                // 4. Standard Layouts (Text is on BOTTOM)
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
