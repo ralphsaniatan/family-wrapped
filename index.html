@@ -75,9 +75,9 @@
                 heading: "Pelvis Pulled a Moses",
                 desc: "Mom went full biblical for the new arrival. Ultimate respect to the superhero.",
                 stats: [
-                    { label: 'Hospital Visits', val: 12, icon: '🏥' },
-                    { label: 'Physio Therapies', val: 25, icon: '🧘' },
-                    { label: 'Doctors Consulted', val: 8, icon: '🩺' }
+                    { label: 'Hospital Visits', val: 20+, icon: '🏥' },
+                    { label: 'Physio Therapies', val: 8, icon: '🧘' },
+                    { label: 'Doctors Consulted', val: 4, icon: '🩺' }
                 ],
                 media: ['mom-hero.jpg']
             },
@@ -155,16 +155,16 @@
                 if (slide.type === 'triple-stagger') {
                     contentHtml = `
                         <div class="relative w-full h-[60vh] flex flex-col items-center">
-                            <div class="polaroid polaroid-pop w-[45%] -left-6 top-0 -rotate-12 opacity-90 shadow-lg" 
+                            <div class="polaroid polaroid-pop w-[50%] -left-6 top-0 -rotate-12 opacity-90 shadow-lg" 
                                  style="animation-delay: 0.1s; --tw-rotate: -12deg;">
                                 <img src="images/${slide.media[1]}">
                             </div>
-                            <div class="polaroid polaroid-pop w-[45%] -right-6 top-8 rotate-12 opacity-90 shadow-lg" 
+                            <div class="polaroid polaroid-pop w-[50%] -right-6 top-8 rotate-12 opacity-90 shadow-lg" 
                                  style="animation-delay: 0.2s; --tw-rotate: 12deg;">
                                 <img src="images/${slide.media[2]}">
                             </div>
-                            <div class="polaroid polaroid-pop w-[60%] z-20 rotate-1 shadow-2xl" 
-                                 style="margin-top: 40%; animation-delay: 0.3s; --tw-rotate: 1deg;">
+                            <div class="polaroid polaroid-pop w-[100%] z-20 rotate-1 shadow-2xl" 
+                                 style="margin-top: 50%; animation-delay: 0.3s; --tw-rotate: 1deg;">
                                 <img src="images/${slide.media[0]}">
                             </div>
                         </div>`;
