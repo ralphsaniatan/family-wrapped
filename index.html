@@ -26,7 +26,7 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .slide.active .polaroid-pop, .slide.active .bento-pop { 
+        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .list-item-pop { 
             animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; 
         }
         @keyframes popIn {
@@ -121,6 +121,16 @@
                 desc: "The family’s newest member mastered rolling, eating, laughing, and the dramatic cry reserved exclusively for when Dad tries to hold him. 2025 growth report: bigger, stronger, happier, and fiercely loyal to Mom & An-an. Dad’s patiently grinding for that comeback feature.", 
                 media: ['baby-growth.mp4'] 
             },
+            {
+                type: 'top-list', // NEW SLIDE TYPE
+                bg: '#121212',
+                heading: "2025 Word Playlist",
+                desc: "Ulap & Kaio’s Greatest Hits",
+                lists: [
+                    { title: "Ulap’s Heavy Rotation", items: ["No", "Garbage", "Carwash", "Tomato", "Satoli"], color: "text-[#1DB954]" },
+                    { title: "Kaio’s Breakout Hits", items: ["Papa", "Papa", "Papa", "Papa", "Papa"], color: "text-[#4dabf7]" }
+                ]
+            },
             { 
                 type: 'standard', 
                 bg: '#6a11cb', 
@@ -184,6 +194,36 @@
                                 </div>
                             </div>
                         </div>`;
+                } else if (slide.type === 'top-list') {
+                    contentHtml = `
+                        <div class="w-full flex-1 flex flex-col px-1 overflow-y-auto mb-2 no-scrollbar">
+                            <div class="mb-5">
+                                <h3 class="text-xs font-bold uppercase tracking-widest mb-3 opacity-70 border-b border-white/20 pb-1">${slide.lists[0].title}</h3>
+                                <div class="flex flex-col gap-2">
+                                    ${slide.lists[0].items.map((item, idx) => `
+                                        <div class="list-item-pop flex items-center gap-3" style="animation-delay: ${idx * 0.1}s">
+                                            <span class="text-base font-bold w-4 text-right ${slide.lists[0].color}">${idx + 1}</span>
+                                            <div class="flex-1 flex items-center justify-between">
+                                                <span class="font-bold text-lg tracking-wide">${item}</span>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold uppercase tracking-widest mb-3 opacity-70 border-b border-white/20 pb-1">${slide.lists[1].title}</h3>
+                                <div class="flex flex-col gap-2">
+                                    ${slide.lists[1].items.map((item, idx) => `
+                                        <div class="list-item-pop flex items-center gap-3" style="animation-delay: ${0.5 + (idx * 0.1)}s">
+                                            <span class="text-base font-bold w-4 text-right ${slide.lists[1].color}">${idx + 1}</span>
+                                            <div class="flex-1 flex items-center justify-between">
+                                                <span class="font-bold text-lg tracking-wide">${item}</span>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>`;
                 } else if (slide.type === 'triple-stagger') {
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
                         <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg; animation-delay: 0.1s;"><img src="images/${slide.media[1]}"></div>
@@ -224,7 +264,7 @@
                     <div id="slide-${i}" class="slide ${slide.textColor || 'text-white'}" style="background: ${slide.bg}">
                         ${(slide.type === 'intro-hero' || slide.type === 'featured-hero' || slide.type === 'video-bg') ? contentHtml : ''}
                         
-                        ${(slide.type !== 'intro-hero' && slide.type !== 'top-feature-video') ? `
+                        ${(slide.type !== 'intro-hero' && slide.type !== 'top-feature-video' && slide.type !== 'top-list') ? `
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                                 ${(slide.type !== 'video-bg' && slide.type !== 'featured-hero') ? contentHtml : '<div class="flex-1"></div>'}
                                 <div class="${(slide.type === 'video-bg' || slide.type === 'featured-hero') ? 'glass p-5 mx-2' : 'px-2'} shrink-0">
@@ -236,7 +276,15 @@
                             </div>
                         ` : ''}
 
-                        ${slide.type === 'top-feature-video' ? contentHtml : ''}
+                        ${(slide.type === 'top-feature-video' || slide.type === 'top-list') ? `
+                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
+                                <div class="px-2 mb-4 shrink-0">
+                                    <h1 class="text-2xl md:text-3xl font-bold mb-2 leading-tight">${slide.heading}</h1>
+                                    <p class="text-sm md:text-base opacity-90 leading-snug">${slide.desc}</p>
+                                </div>
+                                ${contentHtml}
+                             </div>
+                        ` : ''}
                     </div>
                 `;
             });
