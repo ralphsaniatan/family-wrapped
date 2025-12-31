@@ -31,7 +31,7 @@
             to { opacity: 1; transform: scale(1) translateY(0) var(--tw-rotate); }
         }
 
-        .polaroid { background: white; padding: 10px 10px 30px 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
+        .polaroid { background: white; padding: 8px 8px 24px 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
         .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
 
         .glass { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; }
@@ -154,17 +154,17 @@
 
                 if (slide.type === 'triple-stagger') {
                     contentHtml = `
-                        <div class="relative w-full h-[60vh] flex flex-col items-center">
-                            <div class="polaroid polaroid-pop w-[60%] -left-10 top-2 -rotate-12 opacity-95 shadow-xl" 
+                        <div class="relative w-full h-[55vh] flex flex-col items-center">
+                            <div class="polaroid polaroid-pop w-[45%] -left-6 top-0 -rotate-12 opacity-90 shadow-lg" 
                                  style="animation-delay: 0.1s; --tw-rotate: -12deg;">
                                 <img src="images/${slide.media[1]}">
                             </div>
-                            <div class="polaroid polaroid-pop w-[60%] -right-10 top-10 rotate-12 opacity-95 shadow-xl" 
+                            <div class="polaroid polaroid-pop w-[45%] -right-6 top-8 rotate-12 opacity-90 shadow-lg" 
                                  style="animation-delay: 0.2s; --tw-rotate: 12deg;">
                                 <img src="images/${slide.media[2]}">
                             </div>
-                            <div class="polaroid polaroid-pop w-[78%] z-20 rotate-1 shadow-2xl mt-auto mb-4" 
-                                 style="animation-delay: 0.3s; --tw-rotate: 1deg;">
+                            <div class="polaroid polaroid-pop w-[60%] z-20 rotate-1 shadow-2xl" 
+                                 style="margin-top: 40%; animation-delay: 0.3s; --tw-rotate: 1deg;">
                                 <img src="images/${slide.media[0]}">
                             </div>
                         </div>`;
