@@ -80,13 +80,13 @@
                 bg: 'linear-gradient(135deg, #FF0080 0%, #FF8C00 50%, #40E0D0 100%)', 
                 heading: "FAMILY\nWRAPPED\n2025", 
                 desc: "",
-                media: ['family-intro.jpg'] // Using this image now
+                media: ['family-intro.jpg'] 
             },
             { 
                 type: 'triple-stagger', 
                 bg: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)', 
                 heading: "Limited Edition Kid Dropped", 
-                desc: "The family welcomed their second tiny human in 2025 – a brand-new, limited-edition arrival straight from above. Official drop date: [Insert Date of Birth].", 
+                desc: "The family welcomed their second tiny human in 2025 – a brand-new, limited-edition arrival straight from above. Official drop date: January 14.", 
                 media: ['baby1.jpg', 'baby2.jpg', 'baby3.jpg'] 
             },
             { 
@@ -179,7 +179,6 @@
                 // --- SLIDE CONTENT GENERATION ---
 
                 if (slide.type === 'spotify-intro') {
-                     // UPDATED LAYOUT: Heading stack with Polaroid below it
                      contentHtml = `
                          <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
                              <h1 class="text-5xl md:text-[7rem] font-[900] uppercase leading-[0.85] tracking-tighter text-center title-pop">
@@ -272,7 +271,6 @@
                 // 1. Background Only / Full Screen Types
                 if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro') {
                     slideInner = contentHtml;
-                    // Add text block ONLY if it's NOT the spotify-intro
                     if (slide.type !== 'spotify-intro') {
                          slideInner += `
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
