@@ -167,7 +167,7 @@
                         <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg;"><img src="images/${slide.media[0]}"></div>
                     </div>`;
                 } else if (slide.type === 'stats') {
-                    contentHtml = `<div class="relative w-full aspect-[4/5] max-h-[45vh] rounded-[20px] overflow-hidden shadow-2xl mb-4"><img src="images/${slide.media[0]}" class="w-full h-full object-cover">
+                    contentHtml = `<div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-[20px] overflow-hidden shadow-2xl mb-4"><img src="images/${slide.media[0]}" class="w-full h-full object-cover">
                         <div class="absolute inset-x-2 bottom-2 grid grid-cols-3 gap-1.5">${slide.stats.map(s => `<div class="glass p-2 flex flex-col items-center justify-center text-center text-white"><span class="text-xl">${s.icon}</span><span class="block text-lg font-bold">${s.val}</span><span class="text-[8px] uppercase font-bold opacity-70">${s.label}</span></div>`).join('')}</div></div>`;
                 } else if (slide.type === 'video-bg') {
                     contentHtml = `<video src="images/${slide.media[0]}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"></video>`;
