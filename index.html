@@ -213,12 +213,13 @@
                             </div>
                         </div>`;
                 } else if (slide.type === 'double-video-scrapbook') {
+                    // UPDATED: Moved lower (top-12/top-28) and reduced width (w-[46%]) for spacing
                     contentHtml = `
-                        <div class="flex-1 min-h-0 w-full relative">
-                             <div class="absolute top-0 left-2 w-[48%] aspect-[9/16] bg-white p-1.5 shadow-xl rotate-[-3deg] z-10 video-scrap-pop" style="animation-delay: 0.1s">
+                        <div class="flex-1 min-h-0 w-full relative my-auto">
+                             <div class="absolute top-12 left-1 w-[46%] aspect-[9/16] bg-white p-1.5 shadow-xl rotate-[-4deg] z-10 video-scrap-pop" style="animation-delay: 0.1s">
                                 <video src="images/${slide.media[0]}" autoplay muted loop playsinline class="w-full h-full object-cover"></video>
                              </div>
-                             <div class="absolute top-10 right-2 w-[48%] aspect-[9/16] bg-white p-1.5 shadow-xl rotate-[3deg] z-20 video-scrap-pop" style="animation-delay: 0.3s">
+                             <div class="absolute top-28 right-1 w-[46%] aspect-[9/16] bg-white p-1.5 shadow-xl rotate-[4deg] z-20 video-scrap-pop" style="animation-delay: 0.3s">
                                 <video src="images/${slide.media[1]}" autoplay muted loop playsinline class="w-full h-full object-cover"></video>
                              </div>
                         </div>`;
@@ -258,14 +259,12 @@
                             </div>
                         </div>`;
                 } else if (slide.type === 'triple-stagger') {
-                    // ORIGINAL LARGE LAYOUT FOR SLIDE 2
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
                         <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg; animation-delay: 0.1s;"><img src="images/${slide.media[1]}"></div>
                         <div class="polaroid polaroid-pop w-[48%] -right-2 -top-2 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg; animation-delay: 0.2s;"><img src="images/${slide.media[2]}"></div>
                         <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg; animation-delay: 0.3s;"><img src="images/${slide.media[0]}"></div>
                     </div>`;
                 } else if (slide.type === 'triple-stagger-top') {
-                    // NEW SMALLER LAYOUT FOR SLIDE 6 (Higher up, barely overlapping)
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-8 min-h-0">
                         <div class="polaroid polaroid-pop w-[40%] left-6 bottom-36 -rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.1s;">
                             <img src="images/${slide.media[1]}">
