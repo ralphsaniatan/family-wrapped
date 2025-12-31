@@ -21,7 +21,7 @@
         @media (min-width: 768px) {
             #app-viewport { height: 90vh; border-radius: 20px; border: 8px solid #222; margin: auto; }
         }
-        .slide { display: none; height: 100%; width: 100%; position: relative; padding: 24px; flex-direction: column; overflow: hidden; }
+        .slide { display: none; height: 100%; width: 100%; position: relative; padding: 20px; flex-direction: column; overflow: hidden; }
         .slide.active { display: flex; animation: slideUpIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -35,6 +35,11 @@
         .polaroid { background: white; padding: 6px 6px 18px 6px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
         .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
         .glass { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; }
+        
+        /* Text scroll container for small screens */
+        .text-container { overflow-y: auto; max-height: 180px; -webkit-overflow-scrolling: touch; }
+        .text-container::-webkit-scrollbar { display: none; }
+
         .bar-bg { height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; flex: 1; }
         .bar-fill { height: 100%; background: white; width: 0%; transition: width 0.3s linear; }
         .bar-fill.active { width: 100%; }
@@ -53,17 +58,86 @@
 
     <script>
         const data = [
-            { type: 'intro', bg: '#1DB954', heading: "Welcome to 2025 Family Wrapped", desc: "Mom, Dad, Ulap, and Kaio hit play on their year in review.", media: ['family-intro.jpg'] },
-            { type: 'triple-stagger', bg: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)', heading: "Limited Edition Kid Dropped", desc: "A brand-new arrival straight from above.", media: ['baby1.jpg', 'baby2.jpg', 'baby3.jpg'] },
-            { type: 'stats', bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', heading: "Pelvis Pulled a Moses", desc: "Mom went full biblical for the new arrival. Ultimate respect.", stats: [{label:'Visits', val:'20+', icon:'🏥'},{label:'Physio', val:'8', icon:'🧘'},{label:'Doctors', val:'4', icon:'🩺'}], media: ['mom-hero.jpg'] },
-            { type: 'video-bg', bg: '#000', heading: "2025 in Motion", desc: "Playgrounds: ∞ | Beach Days: ∞", media: ['uae-vlog.mp4'] },
-            { type: 'standard', bg: '#ff4632', heading: "Potty Training Complete!", desc: "Ulap retired diapers like a boss 🎓🚽.", media: ['potty-win.jpg'] },
-            { type: 'split-cinematic', bg: '#ee9ca7', heading: "Double 35th Birthday Drop!", desc: "Mom and Dad leveled up to 35.", media: ['dad35.jpg', 'mom35.jpg'], textColor: 'text-gray-800' },
-            { type: 'standard', bg: '#fcead3', heading: "Ulap Turned 3", desc: "Best brother duties (mostly).", media: ['ulap3.jpg'], textColor: 'text-gray-800' },
-            { type: 'video-bg', bg: '#000', heading: "Rising Star 2025", desc: "Mastered rolling, eating, and dramatic crying.", media: ['baby-growth.mp4'] },
-            { type: 'standard', bg: '#6a11cb', heading: "8 Years Married", desc: "Teamwork by day, laughter on repeat.", media: ['marriage.jpg'] },
-            { type: 'floating-grid', bg: '#00b09b', heading: "The Incredible Village", desc: "Thanks to our spiritual family harmony-makers.", media: ['v1.jpg', 'v2.jpg', 'v3.jpg', 'v4.jpg'] },
-            { type: 'outro', bg: '#000', heading: "Produced by the Ultimate Artist", desc: "Written and timed by God. All glory to Him. Happy 2026!", media: ['faith-outro.jpg'] }
+            { 
+                type: 'intro', 
+                bg: '#1DB954', 
+                heading: "Welcome to the 2025 Family Wrapped", 
+                desc: "Mom, Dad, Ulap, and Kaio hit play on their year in review – new arrivals, wild adventures, big wins, and endless grace. The ultimate family playlist drops now.", 
+                media: ['family-intro.jpg'] 
+            },
+            { 
+                type: 'triple-stagger', 
+                bg: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)', 
+                heading: "Limited Edition Kid Dropped", 
+                desc: "The family welcomed their second tiny human in 2025 – a brand-new, limited-edition arrival straight from above. Official drop date: [Insert Date of Birth].", 
+                media: ['baby1.jpg', 'baby2.jpg', 'baby3.jpg'] 
+            },
+            { 
+                type: 'stats', 
+                bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', 
+                heading: "Pelvis Pulled a Moses – Parted the Seas for the New Arrival", 
+                desc: "Mom’s body went full biblical to bring the little one earthside, complete with pubic symphysis diastasis. Recovery stats: Ultimate respect to the superhero who made it happen.", 
+                stats: [{label:'Hospital Visits', val:'20+', icon:'🏥'},{label:'Physio', val:'8', icon:'🧘'},{label:'Doctors', val:'4', icon:'🩺'}], 
+                media: ['mom-hero.jpg'] 
+            },
+            { 
+                type: 'video-bg', 
+                bg: '#000', 
+                heading: "2025 in Motion – Playgrounds: ∞ | Beach Days: ∞ | Parental Energy: Critically Low", 
+                desc: "The family logged countless sunrise swing sessions and sunset sand digs across the UAE, racking up more outdoor hours than anyone sane should attempt. Proudly sponsored by their two tiny but relentless chaos engines.", 
+                media: ['uae-vlog.mp4'] 
+            },
+            { 
+                type: 'standard', 
+                bg: '#ff4632', 
+                heading: "Potty Training Complete!", 
+                desc: "Ulap officially retired diapers in 2025, graduating to big-kid underwear like an absolute boss 🎓🚽. The parents tasted freedom for approximately five minutes… before the diaper subscription auto-renewed courtesy of baby #2.", 
+                media: ['potty-win.jpg'] 
+            },
+            { 
+                type: 'split-cinematic', 
+                bg: '#ee9ca7', 
+                heading: "Double 35th Birthday Drop!", 
+                desc: "Mom and Dad both leveled up to 35 this year, celebrating with double the cake, double the love, and double the toddler + baby interruptions. Still the hottest power-couple collab of the decade.", 
+                media: ['dad35.jpg', 'mom35.jpg'], 
+                textColor: 'text-gray-800' 
+            },
+            { 
+                type: 'standard', 
+                bg: '#fcead3', 
+                heading: "Ulap Turned 3 – And Owned the Entire Year", 
+                desc: "The family’s original tiny human went from wild toddler to confident 3-year-old: mastered sharing (sometimes), full-story conversations, outrunning his parents, and big-brother duties (mostly). Proud doesn’t even cover it. Best birthday yet.", 
+                media: ['ulap3.jpg'], 
+                textColor: 'text-gray-800' 
+            },
+            { 
+                type: 'video-bg', 
+                bg: '#000', 
+                heading: "Rising Star 2025: The Second Tiny Human", 
+                desc: "The family’s newest member mastered rolling, eating, laughing, and the dramatic cry reserved exclusively for when Dad tries to hold him. 2025 growth report: bigger, stronger, happier, and fiercely loyal to Mom & An-an. Dad’s patiently grinding for that comeback feature.", 
+                media: ['baby-growth.mp4'] 
+            },
+            { 
+                type: 'standard', 
+                bg: '#6a11cb', 
+                heading: "Evergreen Hit: 8 Years Married", 
+                desc: "Mom and Dad marked eight years of marriage in 2025, continuing to nail the ultimate collab: teamwork by day, laughter on repeat, late-night kid tag-teams, and stolen kisses whenever possible. Life’s soundtrack wouldn’t be the same without this timeless duet.", 
+                media: ['marriage.jpg'] 
+            },
+            { 
+                type: 'floating-grid', 
+                bg: '#00b09b', 
+                heading: "Gratitude Track: The Family’s Incredible Village", 
+                desc: "The family extends heartfelt thanks to the harmony-makers who carried them through the year: An-an, who became essential family and kept everything running; the Jumawans and loved ones who offered endless support; and their spiritual family whose prayers wrapped around every milestone. You all made the toughest tracks beautiful.", 
+                media: ['v1.jpg', 'v2.jpg', 'v3.jpg', 'v4.jpg'] 
+            },
+            { 
+                type: 'outro', 
+                bg: '#000', 
+                heading: "Produced by the Ultimate Artist", 
+                desc: "Every milestone, every laugh, every late-night survival, and every new life in 2025 was written, produced, and perfectly timed by God. The family stands in awe of His grace, provision, and faithfulness. All glory, honor, and thanks belong to Him – the One who turned ordinary days into an extraordinary soundtrack.", 
+                media: ['faith-outro.jpg'] 
+            }
         ];
 
         let current = 0;
@@ -76,12 +150,12 @@
                 let contentHtml = '';
                 if (slide.type === 'triple-stagger') {
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
-                        <div class="polaroid polaroid-pop w-[45%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg;"><img src="images/${slide.media[1]}"></div>
-                        <div class="polaroid polaroid-pop w-[45%] -right-2 top-8 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg;"><img src="images/${slide.media[2]}"></div>
-                        <div class="polaroid polaroid-pop w-[85%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg;"><img src="images/${slide.media[0]}"></div>
+                        <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg;"><img src="images/${slide.media[1]}"></div>
+                        <div class="polaroid polaroid-pop w-[48%] -right-2 top-8 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg;"><img src="images/${slide.media[2]}"></div>
+                        <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg;"><img src="images/${slide.media[0]}"></div>
                     </div>`;
                 } else if (slide.type === 'stats') {
-                    contentHtml = `<div class="relative w-full aspect-[4/5] max-h-[50vh] rounded-[20px] overflow-hidden shadow-2xl mb-4"><img src="images/${slide.media[0]}" class="w-full h-full object-cover">
+                    contentHtml = `<div class="relative w-full aspect-[4/5] max-h-[45vh] rounded-[20px] overflow-hidden shadow-2xl mb-4"><img src="images/${slide.media[0]}" class="w-full h-full object-cover">
                         <div class="absolute inset-x-2 bottom-2 grid grid-cols-3 gap-1.5">${slide.stats.map(s => `<div class="glass p-2 flex flex-col items-center justify-center text-center text-white"><span class="text-xl">${s.icon}</span><span class="block text-lg font-bold">${s.val}</span><span class="text-[8px] uppercase font-bold opacity-70">${s.label}</span></div>`).join('')}</div></div>`;
                 } else if (slide.type === 'video-bg') {
                     contentHtml = `<video src="images/${slide.media[0]}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"></video>`;
@@ -93,7 +167,20 @@
                     contentHtml = `<div class="w-full flex-1 flex items-center justify-center mb-6 min-h-0"><img src="images/${slide.media[0]}" class="max-w-full max-h-full object-contain rounded-[20px] shadow-2xl"></div>`;
                 }
 
-                container.innerHTML += `<div id="slide-${i}" class="slide ${slide.textColor || 'text-white'}" style="background: ${slide.bg}">${slide.type === 'video-bg' ? contentHtml : ''}<div class="relative z-10 flex flex-col h-full pt-14 pb-8">${slide.type !== 'video-bg' ? contentHtml : '<div class="flex-1"></div>'}<div class="${slide.type === 'video-bg' ? 'glass p-6 mx-2' : 'px-2'} shrink-0"><h1 class="text-2xl font-bold mb-2">${slide.heading}</h1><p class="text-sm opacity-90">${slide.desc}</p></div></div></div>`;
+                container.innerHTML += `
+                    <div id="slide-${i}" class="slide ${slide.textColor || 'text-white'}" style="background: ${slide.bg}">
+                        ${slide.type === 'video-bg' ? contentHtml : ''}
+                        <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
+                            ${slide.type !== 'video-bg' ? contentHtml : '<div class="flex-1"></div>'}
+                            <div class="${slide.type === 'video-bg' ? 'glass p-5 mx-2' : 'px-2'} shrink-0">
+                                <h1 class="text-xl md:text-2xl font-bold mb-2 leading-tight">${slide.heading}</h1>
+                                <div class="text-container">
+                                    <p class="text-sm md:text-base opacity-90 leading-snug">${slide.desc}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
             update();
         }
