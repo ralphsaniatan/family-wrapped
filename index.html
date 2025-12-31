@@ -126,8 +126,8 @@
             { 
                 type: 'triple-stagger-top', 
                 bg: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)', 
-                heading: "Hospital Visits: Few but Necessary", 
-                desc: "Between viral bugs and routine checks, we logged a few hours in the waiting room. Brave faces, lollipop bribes, and clean bills of health made it all manageable.", 
+                heading: "Hospital Hours Logged: Just Enough", // UPDATED
+                desc: "Viral invaders and middle-of-the-night emergencies meant a few ER waiting-room marathons. Brave faces all around and thankfully swift recoveries made it all manageable.", // UPDATED
                 media: ['checkup1.jpg', 'checkup2.jpg', 'checkup3.jpg'] 
             },
             { 
@@ -213,9 +213,8 @@
                             </div>
                         </div>`;
                 } else if (slide.type === 'double-video-scrapbook') {
-                    // UPDATED: Moved lower (top-12/top-28) and reduced width (w-[46%]) for spacing
                     contentHtml = `
-                        <div class="flex-1 min-h-0 w-full relative my-auto">
+                        <div class="flex-1 min-h-0 w-full relative">
                              <div class="absolute top-12 left-1 w-[46%] aspect-[9/16] bg-white p-1.5 shadow-xl rotate-[-4deg] z-10 video-scrap-pop" style="animation-delay: 0.1s">
                                 <video src="images/${slide.media[0]}" autoplay muted loop playsinline class="w-full h-full object-cover"></video>
                              </div>
