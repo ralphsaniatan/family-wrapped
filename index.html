@@ -21,7 +21,7 @@
         @media (min-width: 768px) {
             #app-viewport { height: 90vh; border-radius: 20px; border: 8px solid #222; margin: auto; }
         }
-        .slide { display: none; height: 100%; width: 100%; position: relative; padding: 20px; flex-direction: column; overflow: hidden; }
+        .slide { display: none; height: 100%; width: 100%; position: relative; padding: 24px; flex-direction: column; overflow: hidden; }
         .slide.active { display: flex; animation: slideUpIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -34,15 +34,16 @@
 
         .polaroid { background: white; padding: 6px 6px 18px 6px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
         .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
-        .glass { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; }
+        .glass { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; }
         
-        /* Text scroll container for small screens */
-        .text-container { overflow-y: auto; max-height: 180px; -webkit-overflow-scrolling: touch; }
+        .text-container { overflow-y: auto; max-height: 200px; -webkit-overflow-scrolling: touch; }
         .text-container::-webkit-scrollbar { display: none; }
 
         .bar-bg { height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; flex: 1; }
         .bar-fill { height: 100%; background: white; width: 0%; transition: width 0.3s linear; }
         .bar-fill.active { width: 100%; }
+
+        .bg-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.3) 100%); z-index: 5; }
     </style>
 </head>
 <body>
@@ -59,7 +60,7 @@
     <script>
         const data = [
             { 
-                type: 'intro', 
+                type: 'intro-hero', 
                 bg: '#1DB954', 
                 heading: "Welcome to the 2025 Family Wrapped", 
                 desc: "Mom, Dad, Ulap, and Kaio hit play on their year in review – new arrivals, wild adventures, big wins, and endless grace. The ultimate family playlist drops now.", 
@@ -77,7 +78,7 @@
                 bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', 
                 heading: "Pelvis Pulled a Moses – Parted the Seas for the New Arrival", 
                 desc: "Mom’s body went full biblical to bring the little one earthside, complete with pubic symphysis diastasis. Recovery stats: Ultimate respect to the superhero who made it happen.", 
-                stats: [{label:'Hospital Visits', val:'20+', icon:'🏥'},{label:'Physio', val:'8', icon:'🧘'},{label:'Doctors', val:'4', icon:'🩺'}], 
+                stats: [{label:'Visits', val:'20+', icon:'🏥'},{label:'Physio', val:'8', icon:'🧘'},{label:'Doctors', val:'4', icon:'🩺'}], 
                 media: ['mom-hero.jpg'] 
             },
             { 
@@ -135,7 +136,7 @@
                 type: 'outro', 
                 bg: '#000', 
                 heading: "Produced by the Ultimate Artist", 
-                desc: "Every milestone, every laugh, every late-night survival, and every new life in 2025 was written, produced, and perfectly timed by God. The family stands in awe of His grace, provision, and faithfulness. All glory, honor, and thanks belong to Him – the One who turned ordinary days into an extraordinary soundtrack.", 
+                desc: "Every milestone, every laugh, every late-night survival, and every new life in 2025 was written, produced, and perfectly timed by God. All glory, honor, and thanks belong to Him – the One who turned ordinary days into an extraordinary soundtrack.", 
                 media: ['faith-outro.jpg'] 
             }
         ];
@@ -148,7 +149,18 @@
             data.forEach((slide, i) => {
                 nav.innerHTML += `<div class="bar-bg"><div id="bar-${i}" class="bar-fill"></div></div>`;
                 let contentHtml = '';
-                if (slide.type === 'triple-stagger') {
+                
+                if (slide.type === 'intro-hero') {
+                    contentHtml = `
+                        <img src="images/${slide.media[0]}" class="absolute inset-0 w-full h-full object-cover">
+                        <div class="bg-overlay"></div>
+                        <div class="relative z-10 flex flex-col h-full justify-center px-6 items-center text-center">
+                            <h1 class="text-3xl md:text-4xl font-bold mb-6 leading-tight">${slide.heading}</h1>
+                            <div class="text-container">
+                                <p class="text-lg opacity-90 leading-relaxed">${slide.desc}</p>
+                            </div>
+                        </div>`;
+                } else if (slide.type === 'triple-stagger') {
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
                         <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg;"><img src="images/${slide.media[1]}"></div>
                         <div class="polaroid polaroid-pop w-[48%] -right-2 top-8 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg;"><img src="images/${slide.media[2]}"></div>
@@ -169,16 +181,18 @@
 
                 container.innerHTML += `
                     <div id="slide-${i}" class="slide ${slide.textColor || 'text-white'}" style="background: ${slide.bg}">
-                        ${slide.type === 'video-bg' ? contentHtml : ''}
-                        <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
-                            ${slide.type !== 'video-bg' ? contentHtml : '<div class="flex-1"></div>'}
-                            <div class="${slide.type === 'video-bg' ? 'glass p-5 mx-2' : 'px-2'} shrink-0">
-                                <h1 class="text-xl md:text-2xl font-bold mb-2 leading-tight">${slide.heading}</h1>
-                                <div class="text-container">
-                                    <p class="text-sm md:text-base opacity-90 leading-snug">${slide.desc}</p>
+                        ${slide.type === 'intro-hero' || slide.type === 'video-bg' ? contentHtml : ''}
+                        ${slide.type !== 'intro-hero' ? `
+                            <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
+                                ${slide.type !== 'video-bg' ? contentHtml : '<div class="flex-1"></div>'}
+                                <div class="${slide.type === 'video-bg' ? 'glass p-5 mx-2' : 'px-2'} shrink-0">
+                                    <h1 class="text-xl md:text-2xl font-bold mb-2 leading-tight">${slide.heading}</h1>
+                                    <div class="text-container">
+                                        <p class="text-sm md:text-base opacity-90 leading-snug">${slide.desc}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        ` : ''}
                     </div>
                 `;
             });
