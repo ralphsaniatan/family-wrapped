@@ -61,18 +61,18 @@
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
 
-        /* THIS FIXES THE CLICK ISSUE */
-        canvas {
-            pointer-events: none !important;
-        }
+        /* Fix for confetti clicking through */
+        canvas { pointer-events: none !important; }
     </style>
 </head>
 <body>
 
     <div id="app-viewport">
         <div id="progress-nav" class="absolute top-6 left-6 right-6 flex gap-1 z-50"></div>
-        <div id="main-container" class="h-full w-full"></div>
-        <div class="absolute inset-0 flex z-40">
+        
+        <div id="main-container" class="h-full w-full relative z-30 pointer-events-none"></div>
+        
+        <div class="absolute inset-0 flex z-20">
             <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
             <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
         </div>
@@ -103,10 +103,11 @@
                 bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', 
                 heading: "Pelvis Pulled a Moses – Parted the Seas for the New Arrival", 
                 desc: "Mom’s body went full biblical to bring the little one earthside, complete with pubic symphysis diastasis. Recovery stats: Ultimate respect to the superhero who made it happen.", 
+                // Updated with new stat
                 stats: [
                     {label:'Hospital Visits', val:'20+', icon:'🏥'},
-                    {label:'Physio Sessions', val:'10', icon:'🧘'},
-                    {label:'Doctor Consultations', val:'6', icon:'🩺'},
+                    {label:'Physio Sessions', val:'8', icon:'🧘'},
+                    {label:'Doctor Consultations', val:'4', icon:'🩺'},
                     {label:'Warts Removed', val:'All', icon:'✨'} 
                 ], 
                 media: ['mom-hero.jpg'] 
@@ -301,8 +302,9 @@
                         </div>
                     </div>`;
                 } else if (slide.type === 'stats') {
+                    // UPDATED: Added "Fine Print" below grid
                     contentHtml = `
-                        <div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-[20px] overflow-hidden shadow-2xl mb-4">
+                        <div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-[20px] overflow-hidden shadow-2xl mb-2">
                             <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
                             <div class="absolute inset-x-2 bottom-2 grid grid-cols-4 gap-2 px-1">
                                 ${slide.stats.map((s, idx) => `
@@ -313,7 +315,8 @@
                                     </div>
                                 `).join('')}
                             </div>
-                        </div>`;
+                        </div>
+                        <div class="text-[10px] opacity-60 text-center italic mt-1">*stats could be inaccurate due to memory loss</div>`;
                 } else if (slide.type === 'video-bg') {
                     contentHtml = `<video src="images/${slide.media[0]}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"></video>`;
                 } else if (slide.type === 'split-cinematic') {
@@ -334,7 +337,7 @@
                                 <p class="text-lg md:text-xl font-medium leading-relaxed text-gray-100">${slide.desc}</p>
                             </div>
                             <button onclick="current=0; update(); event.stopPropagation();" 
-                                class="outro-pop relative z-[2000] bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer"
+                                class="outro-pop pointer-events-auto relative z-50 bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer"
                                 style="animation-delay: 0.4s">
                                 Play Again
                             </button>
@@ -344,6 +347,7 @@
                 }
 
                 // --- CONTAINER CONSTRUCTION ---
+                // ADDED: pointer-events-auto to specific interactable elements
                 let slideInner = '';
                 
                 // 1. Background Only / Full Screen Types
@@ -353,36 +357,36 @@
                          slideInner += `
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                                 ${(slide.type !== 'video-bg' && slide.type !== 'featured-hero') ? contentHtml : '<div class="flex-1"></div>'}
-                                <div class="${(slide.type === 'video-bg' || slide.type === 'featured-hero') ? 'glass p-5 mx-2' : 'px-2'} shrink-0">
+                                <div class="${(slide.type === 'video-bg' || slide.type === 'featured-hero') ? 'glass p-5 mx-2' : 'px-2'} shrink-0 pointer-events-auto">
                                     <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                    <div class="text-container">
+                                    <div class="text-container pointer-events-auto">
                                         <p class="${DESC_CLASS}">${slide.desc}</p>
                                     </div>
                                 </div>
                             </div>`;
                     }
                 }
-                // 2. Custom Top Layouts (Text is on TOP)
+                // 2. Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
-                            <div class="px-2 mb-4 shrink-0 ${slide.type === 'sticker-bomb' ? 'text-left' : 'text-center'}">
+                            <div class="px-2 mb-4 shrink-0 ${slide.type === 'sticker-bomb' ? 'text-left' : 'text-center'} pointer-events-auto">
                                 <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                <div class="text-container">
+                                <div class="text-container pointer-events-auto">
                                     <p class="${DESC_CLASS}">${slide.desc}</p>
                                 </div>
                             </div>
                             ${contentHtml}
                         </div>`;
                 }
-                // 3. Standard Layouts (Text is on BOTTOM)
+                // 3. Standard Layouts
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                             ${contentHtml}
-                            <div class="px-2 shrink-0">
+                            <div class="px-2 shrink-0 pointer-events-auto">
                                 <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                <div class="text-container">
+                                <div class="text-container pointer-events-auto">
                                     <p class="${DESC_CLASS}">${slide.desc}</p>
                                 </div>
                             </div>
@@ -391,41 +395,4 @@
 
                 container.innerHTML += `
                     <div id="slide-${i}" class="slide ${slide.textColor || 'text-white'}" style="background: ${slide.bg}">
-                        ${slideInner}
-                    </div>
-                `;
-            });
-            update();
-        }
-
-        function update() {
-            data.forEach((_, i) => {
-                const s = document.getElementById(`slide-${i}`);
-                if (i === current) {
-                    s.style.display = 'flex';
-                    s.classList.add('active');
-                    if (i === data.length - 1) triggerConfetti();
-                } else {
-                    s.style.display = 'none';
-                    s.classList.remove('active');
-                }
-                document.getElementById(`bar-${i}`).className = `bar-fill ${i <= current ? 'active' : ''}`;
-            });
-        }
-
-        function triggerConfetti() {
-            const count = 200, defaults = { origin: { y: 0.7 }, zIndex: 1000 };
-            function fire(particleRatio, opts) { confetti(Object.assign({}, defaults, opts, { particleCount: Math.floor(count * particleRatio) })); }
-            fire(0.25, { spread: 26, startVelocity: 55 }); fire(0.2, { spread: 60 }); fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 });
-        }
-
-        function changeSlide(dir) {
-            if (dir === 1 && current < data.length - 1) current++;
-            else if (dir === -1 && current > 0) current--;
-            update();
-        }
-        render();
-    </script>
-</body>
-</html>
+                        ${slide
