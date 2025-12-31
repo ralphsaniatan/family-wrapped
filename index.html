@@ -26,7 +26,7 @@
         
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop, .slide.active .frame-pop, .slide.active .video-scrap-pop { 
+        .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop, .slide.active .frame-pop, .slide.active .video-scrap-pop, .slide.active .outro-pop { 
             animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; 
         }
         @keyframes popIn {
@@ -98,7 +98,13 @@
                 bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', 
                 heading: "Pelvis Pulled a Moses – Parted the Seas for the New Arrival", 
                 desc: "Mom’s body went full biblical to bring the little one earthside, complete with pubic symphysis diastasis. Recovery stats: Ultimate respect to the superhero who made it happen.", 
-                stats: [{label:'Hospital Visits', val:'20+', icon:'🏥'},{label:'Physio Sessions', val:'10', icon:'🧘'},{label:'Doctor Consultations', val:'6', icon:'🩺'}], 
+                // UPDATED: Added 4th stat
+                stats: [
+                    {label:'Hospital Visits', val:'20+', icon:'🏥'},
+                    {label:'Physio Sessions', val:'8', icon:'🧘'},
+                    {label:'Doctor Consultations', val:'4', icon:'🩺'},
+                    {label:'Warts Removed', val:'All', icon:'✨'} 
+                ], 
                 media: ['mom-hero.jpg'] 
             },
             { 
@@ -291,12 +297,13 @@
                         </div>
                     </div>`;
                 } else if (slide.type === 'stats') {
+                    // UPDATED: Now supports 4 columns for the new stat
                     contentHtml = `
                         <div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-[20px] overflow-hidden shadow-2xl mb-4">
                             <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
-                            <div class="absolute inset-x-2 bottom-2 grid grid-cols-3 gap-2 px-1">
+                            <div class="absolute inset-x-2 bottom-2 grid grid-cols-4 gap-2 px-1">
                                 ${slide.stats.map((s, idx) => `
-                                    <div class="bento-pop bento-card p-3 flex flex-col items-center justify-center text-center" style="animation-delay: ${0.2 + (idx * 0.15)}s">
+                                    <div class="bento-pop bento-card p-2 flex flex-col items-center justify-center text-center" style="animation-delay: ${0.2 + (idx * 0.15)}s">
                                         <span class="text-xl mb-1">${s.icon}</span>
                                         <span class="block text-lg font-bold">${s.val}</span>
                                         <span class="text-[7px] uppercase font-bold opacity-60 leading-tight">${s.label}</span>
