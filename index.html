@@ -257,8 +257,15 @@
                                 <img src="images/${slide.media[0]}" class="w-full h-full object-cover border border-gray-100">
                             </div>
                         </div>`;
-                } else if (slide.type === 'triple-stagger' || slide.type === 'triple-stagger-top') {
-                    // UPDATED LAYOUT: Better spacing and sizing for overlap
+                } else if (slide.type === 'triple-stagger') {
+                    // ORIGINAL LARGE LAYOUT FOR SLIDE 2
+                    contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
+                        <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg; animation-delay: 0.1s;"><img src="images/${slide.media[1]}"></div>
+                        <div class="polaroid polaroid-pop w-[48%] -right-2 -top-2 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg; animation-delay: 0.2s;"><img src="images/${slide.media[2]}"></div>
+                        <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg; animation-delay: 0.3s;"><img src="images/${slide.media[0]}"></div>
+                    </div>`;
+                } else if (slide.type === 'triple-stagger-top') {
+                    // NEW SMALLER LAYOUT FOR SLIDE 6 (Avoids overlapping)
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-8 min-h-0">
                         <div class="polaroid polaroid-pop w-[40%] left-6 bottom-20 -rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.1s;">
                             <img src="images/${slide.media[1]}">
