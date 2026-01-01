@@ -22,6 +22,30 @@
         @media (min-width: 768px) {
             #app-viewport { height: 90vh; border-radius: 20px; border: 8px solid #222; margin: auto; }
         }
+        
+        /* --- LAYERING LOGIC (CRITICAL FIX) --- */
+        
+        /* 1. Navigation Layer (Bottom) - Catches taps that pass through content */
+        .nav-layer { z-index: 20; }
+
+        /* 2. Content Layer (Top) - Visuals sit on top */
+        #main-container { 
+            z-index: 30; 
+            pointer-events: none; /* KEY: Lets clicks pass through images/text */
+        }
+
+        /* 3. Buttons (Exceptions) - Must catch clicks */
+        button, .interactive-btn { 
+            pointer-events: auto !important; 
+            cursor: pointer; 
+            position: relative; 
+            z-index: 50;
+        }
+
+        /* 4. Confetti - Must not block anything */
+        canvas { pointer-events: none !important; }
+
+        /* --- ANIMATIONS --- */
         .slide { display: none; height: 100%; width: 100%; position: relative; padding: 24px; flex-direction: column; overflow: hidden; }
         .slide.active { display: flex; animation: slideUpIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
         
@@ -35,6 +59,7 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
+        /* --- COMPONENT STYLES --- */
         .polaroid { background: white; padding: 6px 6px 18px 6px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
         .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
         
@@ -61,15 +86,6 @@
             transform: rotate(-5deg);
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
-
-        canvas { pointer-events: none !important; }
-        
-        /* THE FIX: Ensure buttons float above the navigation layer */
-        .interactive-btn { 
-            position: relative; 
-            z-index: 50 !important; 
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -92,12 +108,12 @@
     <div id="app-viewport">
         <div id="progress-nav" class="absolute top-6 left-6 right-6 flex gap-1 z-50 pointer-events-none"></div>
         
-        <div class="absolute inset-0 flex z-40">
+        <div id="main-container" class="h-full w-full relative"></div>
+        
+        <div class="absolute inset-0 flex nav-layer">
             <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
             <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
         </div>
-
-        <div id="main-container" class="h-full w-full relative z-10"></div>
     </div>
 
     <div id="in-app-browser-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; padding: 20px;">
@@ -227,7 +243,6 @@
         let loadedCount = 0;
         let totalAssets = 0;
 
-        // --- ASSET PRELOADING ---
         function extractAssets() {
             let assets = [];
             data.forEach(s => {
@@ -242,7 +257,6 @@
             totalAssets = assets.length;
             if (totalAssets === 0) { showStartButton(); return; }
 
-            // Safety timeout
             setTimeout(() => {
                 if (document.getElementById('loading-state').style.display !== 'none') {
                     showStartButton();
@@ -266,7 +280,7 @@
             });
         }
 
-        function updateLoader() {
+        function updateLoader(filename, success) {
             loadedCount++;
             const pct = Math.floor((loadedCount / totalAssets) * 100);
             const bar = document.getElementById('loader-bar');
@@ -292,7 +306,6 @@
             }, 700);
         }
 
-        // --- RENDER LOGIC ---
         function render() {
             const container = document.getElementById('main-container');
             const nav = document.getElementById('progress-nav');
@@ -451,7 +464,6 @@
                 // --- CONTAINER CONSTRUCTION ---
                 let slideInner = '';
                 
-                // 1. Background Only / Full Screen Types
                 if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro' || slide.type === 'outro-impact') {
                     slideInner = contentHtml;
                     if (slide.type !== 'spotify-intro' && slide.type !== 'outro-impact') {
@@ -467,7 +479,6 @@
                             </div>`;
                     }
                 }
-                // 2. Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -480,7 +491,6 @@
                             ${contentHtml}
                         </div>`;
                 }
-                // 3. Standard Layouts
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -531,7 +541,6 @@
             update();
         }
 
-        // ... (Confetti and Preloader functions remain identical to before)
         function triggerConfetti() {
             const count = 200, defaults = { origin: { y: 0.7 }, zIndex: 1000 };
             function fire(particleRatio, opts) { confetti(Object.assign({}, defaults, opts, { particleCount: Math.floor(count * particleRatio) })); }
@@ -554,68 +563,6 @@
                 document.getElementById('in-app-browser-overlay').style.display = 'flex';
             }
         })();
-
-        // Preload logic remains exactly as previous
-        function extractAssets() {
-            let assets = [];
-            data.forEach(s => {
-                if (s.media) assets = assets.concat(s.media);
-                if (s.stickers) assets = assets.concat(s.stickers);
-            });
-            return [...new Set(assets)];
-        }
-
-        function preload() {
-            const assets = extractAssets();
-            totalAssets = assets.length;
-            if (totalAssets === 0) { showStartButton(); return; }
-            setTimeout(() => {
-                if (document.getElementById('loading-state').style.display !== 'none') {
-                    showStartButton();
-                }
-            }, 4000);
-            assets.forEach(file => {
-                const isVideo = file.endsWith('.mp4');
-                if (isVideo) {
-                    const vid = document.createElement('video');
-                    vid.onloadeddata = () => updateLoader(file, true);
-                    vid.onerror = () => { console.warn("Video failed:", file); updateLoader(file, false); };
-                    vid.src = `images/${file}`;
-                    vid.load();
-                } else {
-                    const img = new Image();
-                    img.onload = () => updateLoader(file, true);
-                    img.onerror = () => { console.warn("Image failed:", file); updateLoader(file, false); };
-                    img.src = `images/${file}`;
-                }
-            });
-        }
-
-        function updateLoader(filename, success) {
-            loadedCount++;
-            const pct = Math.floor((loadedCount / totalAssets) * 100);
-            const bar = document.getElementById('loader-bar');
-            const text = document.getElementById('loader-text');
-            if(bar) bar.style.width = pct + '%';
-            if(text) text.innerText = 'LOADING ' + pct + '%';
-            if (loadedCount >= totalAssets) showStartButton();
-        }
-
-        function showStartButton() {
-            const loadingState = document.getElementById('loading-state');
-            const startBtn = document.getElementById('start-btn');
-            if(loadingState) loadingState.style.display = 'none';
-            if(startBtn) startBtn.style.display = 'block';
-        }
-
-        function startExperience() {
-            document.getElementById('loader-overlay').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loader-overlay').style.display = 'none';
-                render(); 
-                update(); 
-            }, 700);
-        }
 
         preload();
     </script>
