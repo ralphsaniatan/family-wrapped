@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Saniatan Family Wrapped 2025</title>
+    <title>Family Wrapped 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;700;900&display=swap" rel="stylesheet">
@@ -63,6 +63,35 @@
 
         /* Fix for confetti clicking through */
         canvas { pointer-events: none !important; }
+
+        /* --- IN-APP BROWSER OVERLAY STYLES --- */
+        #in-app-browser-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .arrow-pointer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 50px;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
     </style>
 </head>
 <body>
@@ -76,6 +105,19 @@
             <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
             <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
         </div>
+    </div>
+
+    <div id="in-app-browser-overlay">
+        <div class="arrow-pointer">☝️</div>
+        <h2 class="text-3xl font-bold mb-4">For the Best Experience</h2>
+        <p class="text-lg mb-8">This presentation works best in your phone's main browser.</p>
+        <div class="bg-gray-800 p-6 rounded-xl border border-gray-600 max-w-sm">
+            <p class="mb-2 font-bold text-xl">1. Tap the <span class="text-blue-400">•••</span> button above</p>
+            <p class="font-bold text-xl">2. Select <span class="text-green-400">Open in Browser</span></p>
+        </div>
+        <button onclick="document.getElementById('in-app-browser-overlay').style.display='none'" class="mt-12 text-sm opacity-50 underline cursor-pointer pointer-events-auto">
+            Continue anyway (Audio/Video might not work)
+        </button>
     </div>
 
     <script>
@@ -102,7 +144,6 @@
                 type: 'stats', 
                 bg: 'linear-gradient(180deg, #2193b0, #6dd5ed)', 
                 heading: "Pelvis Pulled a Moses – Parted the Seas for the New Arrival", 
-                // UPDATED: Mom -> Mama
                 desc: "Mama’s body went full biblical to bring the little one earthside, complete with pubic symphysis diastasis. Recovery stats: Ultimate respect to the superhero who made it happen.", 
                 stats: [
                     {label:'Hospital Visits', val:'20+', icon:'🏥'},
@@ -130,7 +171,6 @@
                 type: 'double-video-scrapbook', 
                 bg: 'linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)', 
                 heading: "Double 35th Birthday Drop!", 
-                // UPDATED: Mom -> Mama, Dad -> Papa
                 desc: "Mama and Papa both leveled up to 35 this year, celebrating with double the cake, double the love, and double the toddler + baby interruptions. Still the hottest power-couple collab of the decade.", 
                 media: ['dad35.mp4', 'mom35.mp4'], 
                 textColor: 'text-gray-800' 
@@ -153,7 +193,6 @@
                 type: 'top-feature-video', 
                 bg: 'linear-gradient(180deg, #000000 0%, #1a1a1a 100%)', 
                 heading: "Rising Star 2025: The Second Tiny Human", 
-                // UPDATED: Mom -> Mama, Dad -> Papa
                 desc: "The family’s newest member mastered rolling, eating, laughing, and the dramatic cry reserved exclusively for when Papa tries to hold him. 2025 growth report: bigger, stronger, happier, and fiercely loyal to Mama & An-an. Papa’s patiently grinding for that comeback feature.", 
                 media: ['baby-growth.mp4'] 
             },
@@ -172,7 +211,6 @@
                 type: 'framed-photo', 
                 bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
                 heading: "8 Years Married", 
-                // UPDATED: Mom -> Mama, Dad -> Papa
                 desc: "Mama and Papa marked eight years of marriage in 2025, continuing to nail the ultimate collab: teamwork by day, laughter on repeat, late-night kid tag-teams, and stolen kisses whenever possible. Life’s soundtrack wouldn’t be the same without this timeless duet.", 
                 media: ['marriage.jpg'] 
             },
@@ -367,7 +405,7 @@
                             </div>`;
                     }
                 }
-                // 2. Custom Top Layouts (Text is on TOP)
+                // 2. Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -380,7 +418,7 @@
                             ${contentHtml}
                         </div>`;
                 }
-                // 3. Standard Layouts (Text is on BOTTOM)
+                // 3. Standard Layouts
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -430,6 +468,29 @@
             else if (dir === -1 && current > 0) current--;
             update();
         }
+        
+        // --- IN-APP BROWSER DETECTION LOGIC ---
+        (function() {
+            var ua = navigator.userAgent || navigator.vendor || window.opera;
+            var isInstagram = (ua.indexOf('Instagram') > -1);
+            var isFacebook = (ua.indexOf('FBAN') > -1) || (ua.indexOf('FBAV') > -1);
+            var isWhatsApp = (ua.indexOf('WhatsApp') > -1);
+            var isMessenger = (ua.indexOf('Messenger') > -1);
+
+            var isAndroid = /android/i.test(ua);
+
+            if (isInstagram || isFacebook || isWhatsApp || isMessenger) {
+                if (isAndroid) {
+                    var url = window.location.href.replace("https://", "").replace("http://", "");
+                    // Optional: You can attempt to automatically open via Intent, though it's not 100% reliable
+                    // var intentUrl = "intent://" + url + "#Intent;scheme=https;package=com.android.chrome;end";
+                    // window.location.href = intentUrl; 
+                }
+                // Show the overlay
+                document.getElementById('in-app-browser-overlay').style.display = 'flex';
+            }
+        })();
+
         render();
     </script>
 </body>
