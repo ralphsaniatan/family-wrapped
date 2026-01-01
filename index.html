@@ -23,32 +23,15 @@
             #app-viewport { height: 90vh; border-radius: 20px; border: 8px solid #222; margin: auto; }
         }
         
-        /* --- LAYERING LOGIC (CRITICAL FIX) --- */
-        
-        /* 1. Navigation Layer (Bottom) - Catches taps that pass through content */
+        /* --- LAYERING LOGIC --- */
         .nav-layer { z-index: 20; }
-
-        /* 2. Content Layer (Top) - Visuals sit on top */
-        #main-container { 
-            z-index: 30; 
-            pointer-events: none; /* KEY: Lets clicks pass through images/text */
-        }
-
-        /* 3. Buttons (Exceptions) - Must catch clicks */
-        button, .interactive-btn { 
-            pointer-events: auto !important; 
-            cursor: pointer; 
-            position: relative; 
-            z-index: 50;
-        }
-
-        /* 4. Confetti - Must not block anything */
+        #main-container { z-index: 30; pointer-events: none; }
+        button, .interactive-btn { pointer-events: auto !important; cursor: pointer; position: relative; z-index: 50; }
         canvas { pointer-events: none !important; }
 
         /* --- ANIMATIONS --- */
         .slide { display: none; height: 100%; width: 100%; position: relative; padding: 24px; flex-direction: column; overflow: hidden; }
         .slide.active { display: flex; animation: slideUpIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
-        
         @keyframes slideUpIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .slide.active .polaroid-pop, .slide.active .bento-pop, .slide.active .sticker-pop, .slide.active .title-pop, .slide.active .frame-pop, .slide.active .video-scrap-pop, .slide.active .outro-pop { 
@@ -62,30 +45,20 @@
         /* --- COMPONENT STYLES --- */
         .polaroid { background: white; padding: 6px 6px 18px 6px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border-radius: 4px; position: absolute; }
         .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
-        
         .bento-card { background: white; color: black; border-radius: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .glass { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; }
-        
         .text-container { overflow-y: auto; max-height: 180px; -webkit-overflow-scrolling: touch; }
         .text-container::-webkit-scrollbar { display: none; }
-
         .bar-bg { height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; flex: 1; }
         .bar-fill { height: 100%; background: white; width: 0%; transition: width 0.3s linear; }
         .bar-fill.active { width: 100%; }
-
         .bg-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 5%, rgba(0,0,0,0.2) 60%); z-index: 5; }
-
         .sticker-word {
             display: inline-block; padding: 8px 16px; margin: 4px;
             background: white; color: black; font-weight: 800; font-size: 1.1rem;
-            border-radius: 4px; box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
-            border: 2px solid white;
+            border-radius: 4px; box-shadow: 2px 4px 10px rgba(0,0,0,0.3); border: 2px solid white;
         }
-        .sticker-photo {
-            position: absolute; 
-            transform: rotate(-5deg);
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-        }
+        .sticker-photo { position: absolute; transform: rotate(-5deg); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
     </style>
 </head>
 <body>
@@ -130,7 +103,6 @@
     </div>
 
     <script>
-        // --- CONFIGURATION ---
         const HEADING_CLASS = "text-2xl md:text-3xl font-bold mb-2 leading-tight";
         const DESC_CLASS = "text-sm md:text-base opacity-90 leading-relaxed";
 
@@ -242,6 +214,14 @@
         let current = 0;
         let loadedCount = 0;
         let totalAssets = 0;
+        
+        // GLOBAL ASSET MAP: Stores blob URLs for videos
+        const assetMap = {};
+
+        function getSource(filename) {
+            // Returns the Blob URL if available, otherwise relative path
+            return assetMap[filename] || `images/${filename}`;
+        }
 
         function extractAssets() {
             let assets = [];
@@ -252,26 +232,42 @@
             return [...new Set(assets)];
         }
 
+        // --- UPDATED PRELOADER WITH BLOB FETCHING ---
         function preload() {
             const assets = extractAssets();
             totalAssets = assets.length;
             if (totalAssets === 0) { showStartButton(); return; }
 
+            // Safety timeout (increased to 8s for video fetching)
             setTimeout(() => {
                 if (document.getElementById('loading-state').style.display !== 'none') {
+                    console.log("Forcing start due to timeout");
                     showStartButton();
                 }
-            }, 4000);
+            }, 8000);
 
             assets.forEach(file => {
                 const isVideo = file.endsWith('.mp4');
+                
                 if (isVideo) {
-                    const vid = document.createElement('video');
-                    vid.onloadeddata = () => updateLoader(file, true);
-                    vid.onerror = () => { console.warn("Video failed:", file); updateLoader(file, false); };
-                    vid.src = `images/${file}`;
-                    vid.load();
+                    // Fetch video as Blob
+                    fetch(`images/${file}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            // Create Blob URL and store it
+                            const objectUrl = URL.createObjectURL(blob);
+                            assetMap[file] = objectUrl;
+                            updateLoader(file, true);
+                        })
+                        .catch(err => {
+                            console.warn("Video fetch failed, falling back to stream:", file);
+                            updateLoader(file, false);
+                        });
                 } else {
+                    // Standard Image Load
                     const img = new Image();
                     img.onload = () => updateLoader(file, true);
                     img.onerror = () => { console.warn("Image failed:", file); updateLoader(file, false); };
@@ -316,7 +312,7 @@
                 nav.innerHTML += `<div class="bar-bg"><div id="bar-${i}" class="bar-fill"></div></div>`;
                 let contentHtml = '';
                 
-                // ... Content Generation ...
+                // UPDATED: All src attributes now use getSource()
                 if (slide.type === 'spotify-intro') {
                      contentHtml = `
                          <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
@@ -324,40 +320,40 @@
                                 ${slide.heading.replace(/\n/g, '<br>')}
                              </h1>
                              <div class="polaroid polaroid-pop rotate-3 w-[90%] md:w-[70%] max-w-[600px] shadow-2xl" style="position: relative; animation-delay: 0.3s;">
-                                <img src="images/${slide.media[0]}">
+                                <img src="${getSource(slide.media[0])}">
                              </div>
                          </div>`;
                 } else if (slide.type === 'featured-hero') {
                     contentHtml = `
                         <div class="absolute inset-0 w-full h-full">
-                            <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
+                            <img src="${getSource(slide.media[0])}" class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
                         </div>`;
                 } else if (slide.type === 'top-feature-video') {
                     contentHtml = `
                         <div class="flex-1 min-h-0 w-full flex items-center justify-center">
                             <div class="w-full h-full max-h-[60vh] rounded-[24px] overflow-hidden shadow-2xl border-2 border-white/10 relative">
-                                    <video src="images/${slide.media[0]}" autoplay muted loop playsinline class="w-full h-full object-cover object-bottom"></video>
+                                    <video src="${getSource(slide.media[0])}" autoplay muted loop playsinline class="w-full h-full object-cover object-bottom"></video>
                             </div>
                         </div>`;
                 } else if (slide.type === 'double-video-scrapbook') {
                     contentHtml = `
                         <div class="flex-1 min-h-0 w-full relative">
                              <div class="absolute top-12 left-1 w-[46%] aspect-[9/16] bg-white p-1.5 shadow-xl rotate-[-4deg] z-10 video-scrap-pop" style="animation-delay: 0.1s">
-                                <video src="images/${slide.media[0]}" autoplay muted loop playsinline class="w-full h-full object-cover"></video>
+                                <video src="${getSource(slide.media[0])}" autoplay muted loop playsinline class="w-full h-full object-cover"></video>
                              </div>
                              <div class="absolute top-28 right-1 w-[46%] aspect-[9/16] bg-white p-1.5 shadow-xl rotate-[4deg] z-20 video-scrap-pop" style="animation-delay: 0.3s">
-                                <video src="images/${slide.media[1]}" autoplay muted loop playsinline class="w-full h-full object-cover"></video>
+                                <video src="${getSource(slide.media[1])}" autoplay muted loop playsinline class="w-full h-full object-cover"></video>
                              </div>
                         </div>`;
                 } else if (slide.type === 'sticker-bomb') {
                     contentHtml = `
                         <div class="w-full flex-1 relative mb-2 p-2">
                              <div class="sticker-photo w-24 h-24 top-4 right-4 z-0 rotate-12 sticker-pop" style="animation-delay: 0.8s;">
-                                <img src="images/${slide.stickers[0]}" class="w-full h-full object-contain">
+                                <img src="${getSource(slide.stickers[0])}" class="w-full h-full object-contain">
                              </div>
                              <div class="sticker-photo w-24 h-24 bottom-4 right-4 z-0 -rotate-6 sticker-pop" style="animation-delay: 0.9s;">
-                                <img src="images/${slide.stickers[1]}" class="w-full h-full object-contain">
+                                <img src="${getSource(slide.stickers[1])}" class="w-full h-full object-contain">
                              </div>
                              <div class="relative z-10 flex flex-col gap-6 h-full justify-center">
                                 <div>
@@ -382,46 +378,46 @@
                     contentHtml = `
                         <div class="flex-1 w-full flex items-center justify-center p-6 min-h-0">
                             <div class="relative w-full max-h-full aspect-[4/5] bg-white p-3 shadow-2xl rotate-1 rounded-sm frame-pop">
-                                <img src="images/${slide.media[0]}" class="w-full h-full object-cover border border-gray-100">
+                                <img src="${getSource(slide.media[0])}" class="w-full h-full object-cover border border-gray-100">
                             </div>
                         </div>`;
                 } else if (slide.type === 'triple-stagger') {
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-4 min-h-0">
-                        <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg; animation-delay: 0.1s;"><img src="images/${slide.media[1]}"></div>
-                        <div class="polaroid polaroid-pop w-[48%] -right-2 -top-2 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg; animation-delay: 0.2s;"><img src="images/${slide.media[2]}"></div>
-                        <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg; animation-delay: 0.3s;"><img src="images/${slide.media[0]}"></div>
+                        <div class="polaroid polaroid-pop w-[48%] -left-2 top-0 -rotate-12 opacity-90 shadow-lg" style="--tw-rotate: -12deg; animation-delay: 0.1s;"><img src="${getSource(slide.media[1])}"></div>
+                        <div class="polaroid polaroid-pop w-[48%] -right-2 -top-2 rotate-12 opacity-90 shadow-lg" style="--tw-rotate: 12deg; animation-delay: 0.2s;"><img src="${getSource(slide.media[2])}"></div>
+                        <div class="polaroid polaroid-pop w-[90%] z-20 rotate-1 shadow-2xl relative" style="--tw-rotate: 1deg; animation-delay: 0.3s;"><img src="${getSource(slide.media[0])}"></div>
                     </div>`;
                 } else if (slide.type === 'triple-stagger-top') {
                     contentHtml = `<div class="relative w-full flex-1 flex flex-col justify-end items-center mb-8 min-h-0">
                         <div class="polaroid polaroid-pop w-[40%] left-6 bottom-36 -rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.1s;">
-                            <img src="images/${slide.media[1]}">
+                            <img src="${getSource(slide.media[1])}">
                         </div>
                         <div class="polaroid polaroid-pop w-[40%] right-6 bottom-40 rotate-[15deg] opacity-95 shadow-lg z-10" style="animation-delay: 0.2s;">
-                            <img src="images/${slide.media[2]}">
+                            <img src="${getSource(slide.media[2])}">
                         </div>
                         <div class="polaroid polaroid-pop w-[55%] z-30 rotate-2 shadow-2xl relative top-12" style="animation-delay: 0.3s;">
-                            <img src="images/${slide.media[0]}">
+                            <img src="${getSource(slide.media[0])}">
                         </div>
                     </div>`;
                 } else if (slide.type === 'scrapbook-collage') {
                     contentHtml = `<div class="relative w-full flex-1 mb-4 p-4">
                         <div class="absolute top-0 left-0 w-[45%] bg-white p-1 shadow-lg rotate-[-6deg] z-10 polaroid-pop" style="animation-delay: 0.1s">
-                            <img src="images/${slide.media[0]}" class="w-full object-cover aspect-[4/5]">
+                            <img src="${getSource(slide.media[0])}" class="w-full object-cover aspect-[4/5]">
                         </div>
                         <div class="absolute top-4 right-0 w-[50%] bg-white p-1 shadow-lg rotate-[3deg] z-20 polaroid-pop" style="animation-delay: 0.2s">
-                            <img src="images/${slide.media[1]}" class="w-full object-cover aspect-square">
+                            <img src="${getSource(slide.media[1])}" class="w-full object-cover aspect-square">
                         </div>
                         <div class="absolute bottom-10 left-2 w-[48%] bg-white p-1 shadow-lg rotate-[2deg] z-30 polaroid-pop" style="animation-delay: 0.3s">
-                            <img src="images/${slide.media[2]}" class="w-full object-cover aspect-square">
+                            <img src="${getSource(slide.media[2])}" class="w-full object-cover aspect-square">
                         </div>
                         <div class="absolute bottom-0 right-2 w-[45%] bg-white p-1 shadow-lg rotate-[-3deg] z-40 polaroid-pop" style="animation-delay: 0.4s">
-                            <img src="images/${slide.media[3]}" class="w-full object-cover aspect-[4/3]">
+                            <img src="${getSource(slide.media[3])}" class="w-full object-cover aspect-[4/3]">
                         </div>
                     </div>`;
                 } else if (slide.type === 'stats') {
                     contentHtml = `
                         <div class="relative w-full aspect-[4/5] max-h-[60vh] rounded-[20px] overflow-hidden shadow-2xl mb-2">
-                            <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
+                            <img src="${getSource(slide.media[0])}" class="w-full h-full object-cover">
                             <div class="absolute inset-x-2 bottom-2 grid grid-cols-4 gap-2 px-1">
                                 ${slide.stats.map((s, idx) => `
                                     <div class="bento-pop bento-card p-2 flex flex-col items-center justify-center text-center" style="animation-delay: ${0.2 + (idx * 0.15)}s">
@@ -434,15 +430,15 @@
                         </div>
                         <div class="text-[10px] opacity-60 text-center italic mt-1">*stats could be inaccurate due to memory loss</div>`;
                 } else if (slide.type === 'video-bg') {
-                    contentHtml = `<video src="images/${slide.media[0]}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"></video>`;
+                    contentHtml = `<video src="${getSource(slide.media[0])}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"></video>`;
                 } else if (slide.type === 'split-cinematic') {
-                    contentHtml = `<div class="flex flex-col gap-2 flex-1 mb-4"><img src="images/${slide.media[0]}" class="h-1/2 object-cover rounded-t-2xl"><img src="images/${slide.media[1]}" class="h-1/2 object-cover rounded-b-2xl"></div>`;
+                    contentHtml = `<div class="flex flex-col gap-2 flex-1 mb-4"><img src="${getSource(slide.media[0])}" class="h-1/2 object-cover rounded-t-2xl"><img src="${getSource(slide.media[1])}" class="h-1/2 object-cover rounded-b-2xl"></div>`;
                 } else if (slide.type === 'floating-grid') {
-                    contentHtml = `<div class="grid grid-cols-2 gap-2 flex-1 mb-4">${slide.media.map(m => `<img src="images/${m}" class="w-full h-full object-cover rounded-xl shadow-md">`).join('')}</div>`;
+                    contentHtml = `<div class="grid grid-cols-2 gap-2 flex-1 mb-4">${slide.media.map(m => `<img src="${getSource(m)}" class="w-full h-full object-cover rounded-xl shadow-md">`).join('')}</div>`;
                 } else if (slide.type === 'outro-impact') {
                     contentHtml = `
                         <div class="absolute inset-0 z-0">
-                            <img src="images/${slide.media[0]}" class="w-full h-full object-cover">
+                            <img src="${getSource(slide.media[0])}" class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
                         </div>
                         <div class="relative z-10 w-full h-full flex flex-col items-center justify-center p-6 text-center">
@@ -458,12 +454,13 @@
                             </button>
                         </div>`;
                 } else {
-                    contentHtml = `<div class="w-full flex-1 flex items-center justify-center mb-6 min-h-0"><img src="images/${slide.media[0]}" class="max-w-full max-h-full object-contain rounded-[20px] shadow-2xl"></div>`;
+                    contentHtml = `<div class="w-full flex-1 flex items-center justify-center mb-6 min-h-0"><img src="${getSource(slide.media[0])}" class="max-w-full max-h-full object-contain rounded-[20px] shadow-2xl"></div>`;
                 }
 
                 // --- CONTAINER CONSTRUCTION ---
                 let slideInner = '';
                 
+                // 1. Background Only / Full Screen Types
                 if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro' || slide.type === 'outro-impact') {
                     slideInner = contentHtml;
                     if (slide.type !== 'spotify-intro' && slide.type !== 'outro-impact') {
@@ -479,6 +476,7 @@
                             </div>`;
                     }
                 }
+                // 2. Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -491,6 +489,7 @@
                             ${contentHtml}
                         </div>`;
                 }
+                // 3. Standard Layouts
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
