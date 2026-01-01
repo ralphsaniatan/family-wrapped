@@ -61,11 +61,22 @@
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
 
-        /* Essential for ensuring clicks pass through confetti layer */
+        /* Fix for confetti clicking through */
         canvas { pointer-events: none !important; }
     </style>
 </head>
 <body>
+
+    <div id="app-viewport">
+        <div id="progress-nav" class="absolute top-6 left-6 right-6 flex gap-1 z-50"></div>
+        
+        <div id="main-container" class="h-full w-full relative z-30 pointer-events-none"></div>
+        
+        <div class="absolute inset-0 flex z-20">
+            <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
+            <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
+        </div>
+    </div>
 
     <div id="loader-overlay" class="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center text-white transition-opacity duration-700">
         <div class="text-4xl font-bold mb-4 tracking-tighter">FAMILY WRAPPED</div>
@@ -77,18 +88,9 @@
             <div id="loader-text" class="text-xs opacity-50 font-mono">LOADING 0%</div>
         </div>
 
-        <button id="start-btn" onclick="startExperience()" class="hidden bg-white text-black font-bold py-3 px-8 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform cursor-pointer">
+        <button id="start-btn" onclick="startExperience()" class="hidden bg-white text-black font-bold py-3 px-8 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform cursor-pointer pointer-events-auto">
             TAP TO OPEN
         </button>
-    </div>
-
-    <div id="app-viewport">
-        <div id="progress-nav" class="absolute top-6 left-6 right-6 flex gap-1 z-50"></div>
-        <div id="main-container" class="h-full w-full relative z-30 pointer-events-none"></div>
-        <div class="absolute inset-0 flex z-20">
-            <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
-            <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
-        </div>
     </div>
 
     <div id="in-app-browser-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; padding: 20px;">
@@ -218,7 +220,7 @@
         let loadedCount = 0;
         let totalAssets = 0;
 
-        // --- ASSET PRELOADING LOGIC ---
+        // --- ASSET PRELOADING LOGIC (FIXED) ---
         function extractAssets() {
             let assets = [];
             data.forEach(s => {
@@ -233,35 +235,53 @@
             totalAssets = assets.length;
             if (totalAssets === 0) { showStartButton(); return; }
 
+            // SAFETY VALVE: Force start after 4 seconds regardless of loading status
+            setTimeout(() => {
+                if (document.getElementById('loading-state').style.display !== 'none') {
+                    console.warn("Loading timed out or stalled. Forcing start.");
+                    showStartButton();
+                }
+            }, 4000);
+
             assets.forEach(file => {
                 const isVideo = file.endsWith('.mp4');
+                
                 if (isVideo) {
                     const vid = document.createElement('video');
+                    vid.onloadeddata = () => updateLoader(file, true);
+                    vid.onerror = () => { console.error("Failed to load video:", file); updateLoader(file, false); };
                     vid.src = `images/${file}`;
-                    vid.onloadeddata = updateLoader;
-                    vid.onerror = updateLoader; // Fail gracefully
+                    vid.load(); // Trigger load
                 } else {
                     const img = new Image();
+                    img.onload = () => updateLoader(file, true);
+                    img.onerror = () => { console.error("Failed to load image:", file); updateLoader(file, false); };
                     img.src = `images/${file}`;
-                    img.onload = updateLoader;
-                    img.onerror = updateLoader;
                 }
             });
         }
 
-        function updateLoader() {
+        function updateLoader(filename, success) {
             loadedCount++;
             const pct = Math.floor((loadedCount / totalAssets) * 100);
-            document.getElementById('loader-bar').style.width = pct + '%';
-            document.getElementById('loader-text').innerText = 'LOADING ' + pct + '%';
+            
+            // Only update bar if elements exist (safety)
+            const bar = document.getElementById('loader-bar');
+            const text = document.getElementById('loader-text');
+            if(bar) bar.style.width = pct + '%';
+            if(text) text.innerText = 'LOADING ' + pct + '%';
+
             if (loadedCount >= totalAssets) {
                 showStartButton();
             }
         }
 
         function showStartButton() {
-            document.getElementById('loading-state').style.display = 'none';
-            document.getElementById('start-btn').style.display = 'block';
+            const loadingState = document.getElementById('loading-state');
+            const startBtn = document.getElementById('start-btn');
+            
+            if(loadingState) loadingState.style.display = 'none';
+            if(startBtn) startBtn.style.display = 'block';
         }
 
         function startExperience() {
@@ -284,7 +304,7 @@
                 nav.innerHTML += `<div class="bar-bg"><div id="bar-${i}" class="bar-fill"></div></div>`;
                 let contentHtml = '';
                 
-                // ... (Content generation logic follows) ...
+                // ... (Content generation) ...
                 if (slide.type === 'spotify-intro') {
                      contentHtml = `
                          <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
@@ -433,7 +453,7 @@
                 // --- CONTAINER CONSTRUCTION ---
                 let slideInner = '';
                 
-                // Background Only / Full Screen Types
+                // 1. Background Only / Full Screen Types
                 if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro' || slide.type === 'outro-impact') {
                     slideInner = contentHtml;
                     if (slide.type !== 'spotify-intro' && slide.type !== 'outro-impact') {
@@ -449,7 +469,7 @@
                             </div>`;
                     }
                 }
-                // Custom Top Layouts
+                // 2. Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -462,7 +482,7 @@
                             ${contentHtml}
                         </div>`;
                 }
-                // Standard Layouts
+                // 3. Standard Layouts
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -492,9 +512,7 @@
                     s.classList.add('active');
                     
                     // --- VIDEO AUTOPLAY LOGIC ---
-                    // Pause all other videos
                     document.querySelectorAll('video').forEach(v => v.pause());
-                    // Find and play current slide's videos
                     const videos = s.querySelectorAll('video');
                     videos.forEach(v => {
                         v.currentTime = 0;
@@ -510,12 +528,6 @@
             });
         }
 
-        function changeSlide(dir) {
-            if (dir === 1 && current < data.length - 1) current++;
-            else if (dir === -1 && current > 0) current--;
-            update();
-        }
-
         function triggerConfetti() {
             const count = 200, defaults = { origin: { y: 0.7 }, zIndex: 1000 };
             function fire(particleRatio, opts) { confetti(Object.assign({}, defaults, opts, { particleCount: Math.floor(count * particleRatio) })); }
@@ -523,6 +535,12 @@
             fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 });
         }
 
+        function changeSlide(dir) {
+            if (dir === 1 && current < data.length - 1) current++;
+            else if (dir === -1 && current > 0) current--;
+            update();
+        }
+        
         // --- IN-APP BROWSER DETECTION ---
         (function() {
             var ua = navigator.userAgent || navigator.vendor || window.opera;
@@ -535,8 +553,6 @@
             if (isInstagram || isFacebook || isWhatsApp || isMessenger) {
                 if (isAndroid) {
                     var url = window.location.href.replace("https://", "").replace("http://", "");
-                    // var intentUrl = "intent://" + url + "#Intent;scheme=https;package=com.android.chrome;end";
-                    // window.location.href = intentUrl; 
                 }
                 document.getElementById('in-app-browser-overlay').style.display = 'flex';
             }
