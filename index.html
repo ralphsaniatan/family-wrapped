@@ -13,6 +13,7 @@
             background: #000; color: white; margin: 0; 
             display: flex; justify-content: center; align-items: center; height: 100dvh;
             overflow: hidden; touch-action: pan-y;
+            -webkit-tap-highlight-color: transparent; /* Removes blue tap box on mobile */
         }
         #app-viewport {
             width: 100%; max-width: 500px; height: 100dvh; max-height: 900px;
@@ -61,22 +62,18 @@
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
 
-        /* Fix for confetti clicking through */
+        /* --- KEY FIXES FOR MOBILE TAPS --- */
+        /* 1. Canvas must allow clicks through */
         canvas { pointer-events: none !important; }
+        
+        /* 2. ALL content is "ghost" (clicks pass through) by default */
+        #main-container * { pointer-events: none; }
+
+        /* 3. ONLY Buttons and specific interactive elements catch clicks */
+        button, .clickable { pointer-events: auto !important; cursor: pointer; }
     </style>
 </head>
 <body>
-
-    <div id="app-viewport">
-        <div id="progress-nav" class="absolute top-6 left-6 right-6 flex gap-1 z-50"></div>
-        
-        <div id="main-container" class="h-full w-full relative z-30 pointer-events-none"></div>
-        
-        <div class="absolute inset-0 flex z-20">
-            <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
-            <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
-        </div>
-    </div>
 
     <div id="loader-overlay" class="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center text-white transition-opacity duration-700">
         <div class="text-4xl font-bold mb-4 tracking-tighter">FAMILY WRAPPED</div>
@@ -91,6 +88,17 @@
         <button id="start-btn" onclick="startExperience()" class="hidden bg-white text-black font-bold py-3 px-8 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform cursor-pointer pointer-events-auto">
             TAP TO OPEN
         </button>
+    </div>
+
+    <div id="app-viewport">
+        <div id="progress-nav" class="absolute top-6 left-6 right-6 flex gap-1 z-50 pointer-events-none"></div>
+        
+        <div id="main-container" class="h-full w-full relative z-30"></div>
+        
+        <div class="absolute inset-0 flex z-20">
+            <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
+            <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
+        </div>
     </div>
 
     <div id="in-app-browser-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; padding: 20px;">
@@ -220,7 +228,7 @@
         let loadedCount = 0;
         let totalAssets = 0;
 
-        // --- ASSET PRELOADING LOGIC (FIXED) ---
+        // --- ASSET PRELOADING LOGIC ---
         function extractAssets() {
             let assets = [];
             data.forEach(s => {
@@ -235,27 +243,25 @@
             totalAssets = assets.length;
             if (totalAssets === 0) { showStartButton(); return; }
 
-            // SAFETY VALVE: Force start after 4 seconds regardless of loading status
+            // SAFETY VALVE: Force start after 4 seconds
             setTimeout(() => {
                 if (document.getElementById('loading-state').style.display !== 'none') {
-                    console.warn("Loading timed out or stalled. Forcing start.");
                     showStartButton();
                 }
             }, 4000);
 
             assets.forEach(file => {
                 const isVideo = file.endsWith('.mp4');
-                
                 if (isVideo) {
                     const vid = document.createElement('video');
                     vid.onloadeddata = () => updateLoader(file, true);
-                    vid.onerror = () => { console.error("Failed to load video:", file); updateLoader(file, false); };
+                    vid.onerror = () => { console.warn("Video failed:", file); updateLoader(file, false); };
                     vid.src = `images/${file}`;
-                    vid.load(); // Trigger load
+                    vid.load();
                 } else {
                     const img = new Image();
                     img.onload = () => updateLoader(file, true);
-                    img.onerror = () => { console.error("Failed to load image:", file); updateLoader(file, false); };
+                    img.onerror = () => { console.warn("Image failed:", file); updateLoader(file, false); };
                     img.src = `images/${file}`;
                 }
             });
@@ -265,7 +271,6 @@
             loadedCount++;
             const pct = Math.floor((loadedCount / totalAssets) * 100);
             
-            // Only update bar if elements exist (safety)
             const bar = document.getElementById('loader-bar');
             const text = document.getElementById('loader-text');
             if(bar) bar.style.width = pct + '%';
@@ -288,8 +293,8 @@
             document.getElementById('loader-overlay').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('loader-overlay').style.display = 'none';
-                render(); // Build the DOM
-                update(); // Activate first slide
+                render(); 
+                update(); 
             }, 700);
         }
 
@@ -304,7 +309,7 @@
                 nav.innerHTML += `<div class="bar-bg"><div id="bar-${i}" class="bar-fill"></div></div>`;
                 let contentHtml = '';
                 
-                // ... (Content generation) ...
+                // ... Content Generation ...
                 if (slide.type === 'spotify-intro') {
                      contentHtml = `
                          <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
@@ -441,7 +446,7 @@
                                 <p class="text-lg md:text-xl font-medium leading-relaxed text-gray-100">${slide.desc}</p>
                             </div>
                             <button onclick="current=0; update(); event.stopPropagation();" 
-                                class="outro-pop pointer-events-auto relative z-[2000] bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer"
+                                class="outro-pop relative z-[2000] bg-white text-black font-extrabold text-lg py-4 px-12 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform active:scale-95 cursor-pointer pointer-events-auto"
                                 style="animation-delay: 0.4s">
                                 Play Again
                             </button>
@@ -453,43 +458,40 @@
                 // --- CONTAINER CONSTRUCTION ---
                 let slideInner = '';
                 
-                // 1. Background Only / Full Screen Types
                 if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro' || slide.type === 'outro-impact') {
                     slideInner = contentHtml;
                     if (slide.type !== 'spotify-intro' && slide.type !== 'outro-impact') {
                          slideInner += `
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                                 ${(slide.type !== 'video-bg' && slide.type !== 'featured-hero') ? contentHtml : '<div class="flex-1"></div>'}
-                                <div class="${(slide.type === 'video-bg' || slide.type === 'featured-hero') ? 'glass p-5 mx-2' : 'px-2'} shrink-0 pointer-events-auto">
+                                <div class="${(slide.type === 'video-bg' || slide.type === 'featured-hero') ? 'glass p-5 mx-2' : 'px-2'} shrink-0">
                                     <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                    <div class="text-container pointer-events-auto">
+                                    <div class="text-container">
                                         <p class="${DESC_CLASS}">${slide.desc}</p>
                                     </div>
                                 </div>
                             </div>`;
                     }
                 }
-                // 2. Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
-                            <div class="px-2 mb-4 shrink-0 ${slide.type === 'sticker-bomb' ? 'text-left' : 'text-center'} pointer-events-auto">
+                            <div class="px-2 mb-4 shrink-0 ${slide.type === 'sticker-bomb' ? 'text-left' : 'text-center'}">
                                 <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                <div class="text-container pointer-events-auto">
+                                <div class="text-container">
                                     <p class="${DESC_CLASS}">${slide.desc}</p>
                                 </div>
                             </div>
                             ${contentHtml}
                         </div>`;
                 }
-                // 3. Standard Layouts
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                             ${contentHtml}
-                            <div class="px-2 shrink-0 pointer-events-auto">
+                            <div class="px-2 shrink-0">
                                 <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                <div class="text-container pointer-events-auto">
+                                <div class="text-container">
                                     <p class="${DESC_CLASS}">${slide.desc}</p>
                                 </div>
                             </div>
@@ -511,7 +513,6 @@
                     s.style.display = 'flex';
                     s.classList.add('active');
                     
-                    // --- VIDEO AUTOPLAY LOGIC ---
                     document.querySelectorAll('video').forEach(v => v.pause());
                     const videos = s.querySelectorAll('video');
                     videos.forEach(v => {
@@ -528,20 +529,19 @@
             });
         }
 
+        function changeSlide(dir) {
+            if (dir === 1 && current < data.length - 1) current++;
+            else if (dir === -1 && current > 0) current--;
+            update();
+        }
+
         function triggerConfetti() {
             const count = 200, defaults = { origin: { y: 0.7 }, zIndex: 1000 };
             function fire(particleRatio, opts) { confetti(Object.assign({}, defaults, opts, { particleCount: Math.floor(count * particleRatio) })); }
             fire(0.25, { spread: 26, startVelocity: 55 }); fire(0.2, { spread: 60 }); fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
             fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 });
         }
-
-        function changeSlide(dir) {
-            if (dir === 1 && current < data.length - 1) current++;
-            else if (dir === -1 && current > 0) current--;
-            update();
-        }
         
-        // --- IN-APP BROWSER DETECTION ---
         (function() {
             var ua = navigator.userAgent || navigator.vendor || window.opera;
             var isInstagram = (ua.indexOf('Instagram') > -1);
@@ -551,14 +551,10 @@
             var isAndroid = /android/i.test(ua);
 
             if (isInstagram || isFacebook || isWhatsApp || isMessenger) {
-                if (isAndroid) {
-                    var url = window.location.href.replace("https://", "").replace("http://", "");
-                }
                 document.getElementById('in-app-browser-overlay').style.display = 'flex';
             }
         })();
 
-        // Start Preloader
         preload();
     </script>
 </body>
