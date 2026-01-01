@@ -181,7 +181,7 @@
                 type: 'sticker-bomb', 
                 bg: 'linear-gradient(135deg, #FF5F6D 0%, #FFC371 50%, #6A82FB 100%)', 
                 heading: "2025 Word Playlist",
-                desc: "Ulap & Kaio’s Greatest Hits",
+                desc: "Top words said by the tiny humans", // UPDATED TEXT
                 lists: [
                     { title: "Ulap’s Heavy Rotation", items: ["Train", "Garbage", "Carwash", "Tomato", "Satoli"], color: "text-[#00FFFF]" },
                     { title: "Kaio’s Breakout Hits", items: ["Papa", "Papa", "Papa", "Papa", "Papa"], color: "text-[#FF00FF]" } 
@@ -215,11 +215,9 @@
         let loadedCount = 0;
         let totalAssets = 0;
         
-        // GLOBAL ASSET MAP: Stores blob URLs for videos
         const assetMap = {};
 
         function getSource(filename) {
-            // Returns the Blob URL if available, otherwise relative path
             return assetMap[filename] || `images/${filename}`;
         }
 
@@ -232,13 +230,11 @@
             return [...new Set(assets)];
         }
 
-        // --- UPDATED PRELOADER WITH BLOB FETCHING ---
         function preload() {
             const assets = extractAssets();
             totalAssets = assets.length;
             if (totalAssets === 0) { showStartButton(); return; }
 
-            // Safety timeout (increased to 8s for video fetching)
             setTimeout(() => {
                 if (document.getElementById('loading-state').style.display !== 'none') {
                     console.log("Forcing start due to timeout");
@@ -250,14 +246,12 @@
                 const isVideo = file.endsWith('.mp4');
                 
                 if (isVideo) {
-                    // Fetch video as Blob
                     fetch(`images/${file}`)
                         .then(response => {
                             if (!response.ok) throw new Error('Network response was not ok');
                             return response.blob();
                         })
                         .then(blob => {
-                            // Create Blob URL and store it
                             const objectUrl = URL.createObjectURL(blob);
                             assetMap[file] = objectUrl;
                             updateLoader(file, true);
@@ -267,7 +261,6 @@
                             updateLoader(file, false);
                         });
                 } else {
-                    // Standard Image Load
                     const img = new Image();
                     img.onload = () => updateLoader(file, true);
                     img.onerror = () => { console.warn("Image failed:", file); updateLoader(file, false); };
@@ -312,7 +305,6 @@
                 nav.innerHTML += `<div class="bar-bg"><div id="bar-${i}" class="bar-fill"></div></div>`;
                 let contentHtml = '';
                 
-                // UPDATED: All src attributes now use getSource()
                 if (slide.type === 'spotify-intro') {
                      contentHtml = `
                          <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
@@ -347,12 +339,13 @@
                              </div>
                         </div>`;
                 } else if (slide.type === 'sticker-bomb') {
+                    // UPDATED: Stickers w-36 h-36
                     contentHtml = `
                         <div class="w-full flex-1 relative mb-2 p-2">
-                             <div class="sticker-photo w-24 h-24 top-4 right-4 z-0 rotate-12 sticker-pop" style="animation-delay: 0.8s;">
+                             <div class="sticker-photo w-36 h-36 top-4 right-4 z-0 rotate-12 sticker-pop" style="animation-delay: 0.8s;">
                                 <img src="${getSource(slide.stickers[0])}" class="w-full h-full object-contain">
                              </div>
-                             <div class="sticker-photo w-24 h-24 bottom-4 right-4 z-0 -rotate-6 sticker-pop" style="animation-delay: 0.9s;">
+                             <div class="sticker-photo w-36 h-36 bottom-4 right-4 z-0 -rotate-6 sticker-pop" style="animation-delay: 0.9s;">
                                 <img src="${getSource(slide.stickers[1])}" class="w-full h-full object-contain">
                              </div>
                              <div class="relative z-10 flex flex-col gap-6 h-full justify-center">
@@ -457,46 +450,42 @@
                     contentHtml = `<div class="w-full flex-1 flex items-center justify-center mb-6 min-h-0"><img src="${getSource(slide.media[0])}" class="max-w-full max-h-full object-contain rounded-[20px] shadow-2xl"></div>`;
                 }
 
-                // --- CONTAINER CONSTRUCTION ---
                 let slideInner = '';
                 
-                // 1. Background Only / Full Screen Types
                 if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro' || slide.type === 'outro-impact') {
                     slideInner = contentHtml;
                     if (slide.type !== 'spotify-intro' && slide.type !== 'outro-impact') {
                          slideInner += `
                             <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                                 ${(slide.type !== 'video-bg' && slide.type !== 'featured-hero') ? contentHtml : '<div class="flex-1"></div>'}
-                                <div class="${(slide.type === 'video-bg' || slide.type === 'featured-hero') ? 'glass p-5 mx-2' : 'px-2'} shrink-0">
+                                <div class="${(slide.type === 'video-bg' || slide.type === 'featured-hero') ? 'glass p-5 mx-2' : 'px-2'} shrink-0 pointer-events-auto">
                                     <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                    <div class="text-container">
+                                    <div class="text-container pointer-events-auto">
                                         <p class="${DESC_CLASS}">${slide.desc}</p>
                                     </div>
                                 </div>
                             </div>`;
                     }
                 }
-                // 2. Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
-                            <div class="px-2 mb-4 shrink-0 ${slide.type === 'sticker-bomb' ? 'text-left' : 'text-center'}">
+                            <div class="px-2 mb-4 shrink-0 ${slide.type === 'sticker-bomb' ? 'text-left' : 'text-center'} pointer-events-auto">
                                 <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                <div class="text-container">
+                                <div class="text-container pointer-events-auto">
                                     <p class="${DESC_CLASS}">${slide.desc}</p>
                                 </div>
                             </div>
                             ${contentHtml}
                         </div>`;
                 }
-                // 3. Standard Layouts
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
                             ${contentHtml}
-                            <div class="px-2 shrink-0">
+                            <div class="px-2 shrink-0 pointer-events-auto">
                                 <h1 class="${HEADING_CLASS}">${slide.heading}</h1>
-                                <div class="text-container">
+                                <div class="text-container pointer-events-auto">
                                     <p class="${DESC_CLASS}">${slide.desc}</p>
                                 </div>
                             </div>
