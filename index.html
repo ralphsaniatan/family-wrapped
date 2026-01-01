@@ -61,54 +61,38 @@
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
 
-        /* Fix for confetti clicking through */
+        /* Essential for ensuring clicks pass through confetti layer */
         canvas { pointer-events: none !important; }
-
-        /* --- IN-APP BROWSER OVERLAY STYLES --- */
-        #in-app-browser-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 9999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-        .arrow-pointer {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 50px;
-            animation: bounce 1s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
     </style>
 </head>
 <body>
 
+    <div id="loader-overlay" class="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center text-white transition-opacity duration-700">
+        <div class="text-4xl font-bold mb-4 tracking-tighter">FAMILY WRAPPED</div>
+        
+        <div id="loading-state" class="flex flex-col items-center">
+            <div class="w-48 h-1 bg-gray-800 rounded-full overflow-hidden mb-2">
+                <div id="loader-bar" class="h-full bg-white w-0 transition-all duration-300 ease-out"></div>
+            </div>
+            <div id="loader-text" class="text-xs opacity-50 font-mono">LOADING 0%</div>
+        </div>
+
+        <button id="start-btn" onclick="startExperience()" class="hidden bg-white text-black font-bold py-3 px-8 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform cursor-pointer">
+            TAP TO OPEN
+        </button>
+    </div>
+
     <div id="app-viewport">
         <div id="progress-nav" class="absolute top-6 left-6 right-6 flex gap-1 z-50"></div>
-        
         <div id="main-container" class="h-full w-full relative z-30 pointer-events-none"></div>
-        
         <div class="absolute inset-0 flex z-20">
             <div class="w-1/3 h-full cursor-pointer" onclick="changeSlide(-1)"></div>
             <div class="w-2/3 h-full cursor-pointer" onclick="changeSlide(1)"></div>
         </div>
     </div>
 
-    <div id="in-app-browser-overlay">
-        <div class="arrow-pointer">☝️</div>
+    <div id="in-app-browser-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: white; padding: 20px;">
+        <div style="font-size: 50px; margin-bottom: 20px; position: absolute; top: 20px; right: 20px;">☝️</div>
         <h2 class="text-3xl font-bold mb-4">For the Best Experience</h2>
         <p class="text-lg mb-8">This presentation works best in your phone's main browser.</p>
         <div class="bg-gray-800 p-6 rounded-xl border border-gray-600 max-w-sm">
@@ -116,7 +100,7 @@
             <p class="font-bold text-xl">2. Select <span class="text-green-400">Open in Browser</span></p>
         </div>
         <button onclick="document.getElementById('in-app-browser-overlay').style.display='none'" class="mt-12 text-sm opacity-50 underline cursor-pointer pointer-events-auto">
-            Continue anyway (Audio/Video might not work)
+            Continue anyway (Video might not play)
         </button>
     </div>
 
@@ -231,16 +215,76 @@
         ];
 
         let current = 0;
+        let loadedCount = 0;
+        let totalAssets = 0;
 
+        // --- ASSET PRELOADING LOGIC ---
+        function extractAssets() {
+            let assets = [];
+            data.forEach(s => {
+                if (s.media) assets = assets.concat(s.media);
+                if (s.stickers) assets = assets.concat(s.stickers);
+            });
+            return [...new Set(assets)]; // Unique assets
+        }
+
+        function preload() {
+            const assets = extractAssets();
+            totalAssets = assets.length;
+            if (totalAssets === 0) { showStartButton(); return; }
+
+            assets.forEach(file => {
+                const isVideo = file.endsWith('.mp4');
+                if (isVideo) {
+                    const vid = document.createElement('video');
+                    vid.src = `images/${file}`;
+                    vid.onloadeddata = updateLoader;
+                    vid.onerror = updateLoader; // Fail gracefully
+                } else {
+                    const img = new Image();
+                    img.src = `images/${file}`;
+                    img.onload = updateLoader;
+                    img.onerror = updateLoader;
+                }
+            });
+        }
+
+        function updateLoader() {
+            loadedCount++;
+            const pct = Math.floor((loadedCount / totalAssets) * 100);
+            document.getElementById('loader-bar').style.width = pct + '%';
+            document.getElementById('loader-text').innerText = 'LOADING ' + pct + '%';
+            if (loadedCount >= totalAssets) {
+                showStartButton();
+            }
+        }
+
+        function showStartButton() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('start-btn').style.display = 'block';
+        }
+
+        function startExperience() {
+            document.getElementById('loader-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loader-overlay').style.display = 'none';
+                render(); // Build the DOM
+                update(); // Activate first slide
+            }, 700);
+        }
+
+        // --- SLIDESHOW LOGIC ---
         function render() {
             const container = document.getElementById('main-container');
             const nav = document.getElementById('progress-nav');
+            container.innerHTML = '';
+            nav.innerHTML = '';
+            
             data.forEach((slide, i) => {
                 nav.innerHTML += `<div class="bar-bg"><div id="bar-${i}" class="bar-fill"></div></div>`;
                 let contentHtml = '';
                 
-                // --- SLIDE CONTENT GENERATION ---
-
+                // ... (Content generation logic follows) ...
                 if (slide.type === 'spotify-intro') {
                      contentHtml = `
                          <div class="flex-1 w-full flex flex-col items-center justify-center p-4 z-20 gap-8">
@@ -389,7 +433,7 @@
                 // --- CONTAINER CONSTRUCTION ---
                 let slideInner = '';
                 
-                // 1. Background Only / Full Screen Types
+                // Background Only / Full Screen Types
                 if (slide.type === 'featured-hero' || slide.type === 'video-bg' || slide.type === 'spotify-intro' || slide.type === 'outro-impact') {
                     slideInner = contentHtml;
                     if (slide.type !== 'spotify-intro' && slide.type !== 'outro-impact') {
@@ -405,7 +449,7 @@
                             </div>`;
                     }
                 }
-                // 2. Custom Top Layouts
+                // Custom Top Layouts
                 else if (slide.type === 'top-feature-video' || slide.type === 'sticker-bomb' || slide.type === 'double-video-scrapbook' || slide.type === 'triple-stagger-top') {
                      slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -418,7 +462,7 @@
                             ${contentHtml}
                         </div>`;
                 }
-                // 3. Standard Layouts
+                // Standard Layouts
                 else {
                     slideInner = `
                         <div class="relative z-10 flex flex-col h-full pt-14 pb-8">
@@ -438,7 +482,6 @@
                     </div>
                 `;
             });
-            update();
         }
 
         function update() {
@@ -447,6 +490,17 @@
                 if (i === current) {
                     s.style.display = 'flex';
                     s.classList.add('active');
+                    
+                    // --- VIDEO AUTOPLAY LOGIC ---
+                    // Pause all other videos
+                    document.querySelectorAll('video').forEach(v => v.pause());
+                    // Find and play current slide's videos
+                    const videos = s.querySelectorAll('video');
+                    videos.forEach(v => {
+                        v.currentTime = 0;
+                        v.play().catch(e => console.log("Autoplay prevented:", e));
+                    });
+
                     if (i === data.length - 1) triggerConfetti();
                 } else {
                     s.style.display = 'none';
@@ -456,6 +510,12 @@
             });
         }
 
+        function changeSlide(dir) {
+            if (dir === 1 && current < data.length - 1) current++;
+            else if (dir === -1 && current > 0) current--;
+            update();
+        }
+
         function triggerConfetti() {
             const count = 200, defaults = { origin: { y: 0.7 }, zIndex: 1000 };
             function fire(particleRatio, opts) { confetti(Object.assign({}, defaults, opts, { particleCount: Math.floor(count * particleRatio) })); }
@@ -463,35 +523,27 @@
             fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 }); fire(0.1, { spread: 120, startVelocity: 45 });
         }
 
-        function changeSlide(dir) {
-            if (dir === 1 && current < data.length - 1) current++;
-            else if (dir === -1 && current > 0) current--;
-            update();
-        }
-        
-        // --- IN-APP BROWSER DETECTION LOGIC ---
+        // --- IN-APP BROWSER DETECTION ---
         (function() {
             var ua = navigator.userAgent || navigator.vendor || window.opera;
             var isInstagram = (ua.indexOf('Instagram') > -1);
             var isFacebook = (ua.indexOf('FBAN') > -1) || (ua.indexOf('FBAV') > -1);
             var isWhatsApp = (ua.indexOf('WhatsApp') > -1);
             var isMessenger = (ua.indexOf('Messenger') > -1);
-
             var isAndroid = /android/i.test(ua);
 
             if (isInstagram || isFacebook || isWhatsApp || isMessenger) {
                 if (isAndroid) {
                     var url = window.location.href.replace("https://", "").replace("http://", "");
-                    // Optional: You can attempt to automatically open via Intent, though it's not 100% reliable
                     // var intentUrl = "intent://" + url + "#Intent;scheme=https;package=com.android.chrome;end";
                     // window.location.href = intentUrl; 
                 }
-                // Show the overlay
                 document.getElementById('in-app-browser-overlay').style.display = 'flex';
             }
         })();
 
-        render();
+        // Start Preloader
+        preload();
     </script>
 </body>
 </html>
